@@ -1,0 +1,2072 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
+<meta name="theme-color" content="#0D0F12">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>TESTEMT — Esquadrias</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{
+  --bg:#0D0F12;--bg2:#13161B;--bg3:#1A1E26;--bg4:#222733;
+  --b:rgba(255,255,255,.07);--b2:rgba(255,255,255,.13);
+  --t:#F0F2F5;--t2:#8B91A0;--t3:#555D6E;
+  --ac:#3B82F6;--ac2:#1D4ED8;--gl:rgba(59,130,246,.15);
+  --gn:#10B981;--gnb:rgba(16,185,129,.1);
+  --rd:#EF4444;--rdb:rgba(239,68,68,.1);
+  --am:#F59E0B;--amb:rgba(245,158,11,.1);
+  --fn:'DM Sans',sans-serif;--mn:'DM Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--bg);color:var(--t);font-family:var(--fn);font-size:14px;overflow:hidden}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-thumb{background:var(--b2);border-radius:4px}
+
+/* ── LAYOUT ── */
+#app{display:flex;height:100vh;height:100dvh}
+#sb{width:210px;flex-shrink:0;background:var(--bg2);border-right:1px solid var(--b);display:flex;flex-direction:column;transition:left .25s}
+#main{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden}
+#tb{height:54px;flex-shrink:0;background:var(--bg2);border-bottom:1px solid var(--b);display:flex;align-items:center;padding:0 18px;gap:10px}
+#ct{flex:1;overflow-y:auto;padding:20px;-webkit-overflow-scrolling:touch}
+#sbo{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99}
+
+/* ── SIDEBAR ── */
+.slogo{padding:16px 14px 12px;border-bottom:1px solid var(--b);display:flex;align-items:center;gap:10px}
+.slogo-i{width:30px;height:30px;background:var(--ac);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:#fff;flex-shrink:0}
+.slogo-n{font-size:14px;font-weight:600;letter-spacing:-.3px}
+.slogo-s{font-size:9px;color:var(--t3);margin-top:1px}
+.snav{flex:1;overflow-y:auto;padding:6px 0}
+.sg{padding:12px 14px 4px;font-size:9px;font-weight:600;color:var(--t3);letter-spacing:.08em;text-transform:uppercase}
+.ni{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:7px;cursor:pointer;color:var(--t2);font-size:12.5px;margin:1px 5px;position:relative;transition:.13s;-webkit-tap-highlight-color:transparent}
+.ni:hover{background:var(--bg3);color:var(--t)}
+.ni.on{background:var(--gl);color:var(--ac);font-weight:500}
+.ni.on::before{content:'';position:absolute;left:0;top:25%;width:3px;height:50%;background:var(--ac);border-radius:0 2px 2px 0}
+.ni-i{font-size:14px;width:18px;text-align:center;flex-shrink:0}
+.nbdg{margin-left:auto;color:#fff;font-size:9px;font-weight:600;padding:1px 5px;border-radius:8px}
+.sft{padding:10px;border-top:1px solid var(--b);display:flex;align-items:center;gap:8px;cursor:pointer}
+.sft:hover{background:var(--bg3);border-radius:8px;margin:2px}
+.av{border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:600;color:#fff;flex-shrink:0;font-size:11px}
+
+/* ── TOPBAR ── */
+#tb-t{font-size:14px;font-weight:500}
+.tb-r{margin-left:auto;display:flex;align-items:center;gap:8px}
+#hmb{display:none;background:transparent;border:none;color:var(--t2);font-size:22px;cursor:pointer;padding:2px;line-height:1;flex-shrink:0}
+.srch{display:flex;align-items:center;gap:7px;background:var(--bg3);border:1px solid var(--b);border-radius:7px;padding:5px 10px;width:200px}
+.srch input{background:transparent;border:none;outline:none;color:var(--t);font-family:var(--fn);font-size:12px;width:100%}
+.srch input::placeholder{color:var(--t3)}
+
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:6px 13px;border-radius:7px;border:1px solid var(--b2);background:transparent;color:var(--t2);font-family:var(--fn);font-size:12px;font-weight:500;cursor:pointer;transition:.13s;-webkit-tap-highlight-color:transparent;white-space:nowrap}
+.btn:hover{background:var(--bg3);color:var(--t)}
+.btn:active{transform:scale(.97)}
+.btn.p{background:var(--ac);border-color:var(--ac);color:#fff}
+.btn.p:hover{background:var(--ac2)}
+.btn.g{background:var(--gnb);border-color:var(--gn);color:var(--gn)}
+.btn.s{font-size:11px;padding:4px 9px}
+.btn.wa{background:rgba(37,211,102,.12);border-color:#25D366;color:#25D366}
+
+/* ── CARDS & KPIs ── */
+.card{background:var(--bg2);border:1px solid var(--b);border-radius:12px;padding:18px}
+.ct{font-size:12px;font-weight:500;color:var(--t2);margin-bottom:12px}
+.kgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:10px;margin-bottom:18px}
+.kc{background:var(--bg2);border:1px solid var(--b);border-radius:9px;padding:14px}
+.kc-l{font-size:11px;color:var(--t2);margin-bottom:6px}
+.kc-v{font-size:24px;font-weight:600;letter-spacing:-.5px;line-height:1}
+.kc-d{font-size:10px;margin-top:5px}
+.up{color:var(--gn)}.dn{color:var(--rd)}
+
+/* ── PILLS ── */
+.pill{display:inline-flex;align-items:center;padding:2px 7px;border-radius:20px;font-size:10px;font-weight:500;white-space:nowrap}
+.pill.g{background:var(--gnb);color:var(--gn)}
+.pill.r{background:var(--rdb);color:var(--rd)}
+.pill.a{background:var(--amb);color:var(--am)}
+.pill.b{background:var(--gl);color:var(--ac)}
+.pill.gr{background:rgba(107,114,128,.15);color:#9CA3AF}
+
+/* ── TABLES ── */
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse}
+th{font-size:10px;font-weight:500;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;padding:7px 10px;border-bottom:1px solid var(--b);text-align:left;white-space:nowrap}
+td{padding:9px 10px;border-bottom:1px solid var(--b);font-size:12px;color:var(--t)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(255,255,255,.012)}
+.mn{font-family:var(--mn);font-size:10px;color:var(--t3)}
+
+/* ── PAGES ── */
+.pg{display:none}
+.pg.on{display:block;animation:fi .18s ease}
+@keyframes fi{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.ph{display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:20px}
+.pt{font-size:20px;font-weight:600;letter-spacing:-.3px}
+.ps{font-size:12px;color:var(--t3);margin-top:2px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.mt{margin-top:14px}
+
+/* ── CHARTS ── */
+.ch{height:200px;position:relative}
+.ch-s{height:150px;position:relative}
+
+/* ── KANBAN ── */
+.kb{display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;-webkit-overflow-scrolling:touch}
+.kbc{flex-shrink:0;width:170px;background:var(--bg3);border-radius:8px;border:1px solid var(--b);transition:border-color .15s}
+.kbc.drag-over{border-color:var(--ac);background:rgba(59,130,246,.06)}
+.kbh{padding:9px 10px;font-size:10px;font-weight:600;color:var(--t2);border-bottom:1px solid var(--b);display:flex;align-items:center;justify-content:space-between}
+.kbn{font-size:9px;background:var(--bg4);color:var(--t3);padding:1px 5px;border-radius:8px}
+.kbb{padding:6px;display:flex;flex-direction:column;gap:5px;min-height:70px}
+.kbi{background:var(--bg2);border:1px solid var(--b);border-radius:7px;padding:9px;cursor:grab;transition:.15s;user-select:none}
+.kbi:hover{border-color:var(--b2);box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.kbi:active{cursor:grabbing}
+.kbi.dragging{opacity:.4;transform:scale(.97)}
+.kbi-c{font-size:9px;color:var(--t3);font-family:var(--mn);margin-bottom:2px}
+.kbi-n{font-size:11px;font-weight:500}
+.kbi-k{font-size:10px;color:var(--t3);margin-top:2px}
+.kbi-f{display:flex;align-items:center;justify-content:space-between;margin-top:6px}
+.kbi-d{font-size:9px;color:var(--t3)}
+.kbi-d.lt{color:var(--rd)}
+.kdot{width:5px;height:5px;border-radius:50%}
+.kb-drop-hint{border:2px dashed var(--ac);border-radius:7px;min-height:40px;background:rgba(59,130,246,.04)}
+
+/* ── ORÇAMENTO BUILDER ── */
+.orc-layout{display:grid;grid-template-columns:1fr 380px;gap:14px;align-items:start}
+.item-row{background:var(--bg3);border:1px solid var(--b);border-radius:10px;padding:14px;margin-bottom:10px;position:relative}
+.item-row .del{position:absolute;top:10px;right:10px;background:transparent;border:none;color:var(--t3);cursor:pointer;font-size:16px;line-height:1;padding:2px}
+.item-row .del:hover{color:var(--rd)}
+.item-num{width:22px;height:22px;background:var(--ac);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0;margin-bottom:8px}
+.frow{display:grid;gap:8px;margin-bottom:8px}
+.frow.c2{grid-template-columns:1fr 1fr}
+.frow.c3{grid-template-columns:1fr 1fr 1fr}
+.frow.c4{grid-template-columns:1fr 1fr 1fr 1fr}
+.fl label{display:block;font-size:10px;font-weight:500;color:var(--t3);margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em}
+.fl input,.fl select,.fl textarea{width:100%;background:var(--bg2);border:1px solid var(--b);border-radius:7px;padding:7px 10px;color:var(--t);font-family:var(--fn);font-size:12px;outline:none;transition:.13s}
+.fl input:focus,.fl select:focus,.fl textarea:focus{border-color:var(--ac)}
+.fl select option{background:var(--bg3)}
+.fl textarea{resize:vertical;min-height:60px}
+
+/* ── PROJETO VISUAL (canvas) ── */
+.pv-wrap{background:var(--bg3);border:1px solid var(--b);border-radius:10px;overflow:hidden;position:sticky;top:20px}
+.pv-tabs{display:flex;background:var(--bg2);border-bottom:1px solid var(--b)}
+.pvt{padding:9px 14px;font-size:11px;font-weight:500;color:var(--t3);cursor:pointer;border-bottom:2px solid transparent;transition:.13s}
+.pvt.on{color:var(--ac);border-bottom-color:var(--ac)}
+.pv-canvas{padding:16px;display:flex;align-items:center;justify-content:center;min-height:220px;background:var(--bg3)}
+.pv-info{padding:12px 14px;border-top:1px solid var(--b)}
+.pv-spec{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.pv-tag{background:var(--bg4);border-radius:5px;padding:3px 8px;font-size:10px;color:var(--t2)}
+.pv-price{font-size:20px;font-weight:600;letter-spacing:-.3px}
+.pv-sub{font-size:10px;color:var(--t3);margin-top:2px}
+
+/* ── PROPOSTA PDF PREVIEW ── */
+.prop-wrap{background:#fff;color:#111;border-radius:10px;overflow:hidden;max-width:680px;margin:0 auto;font-family:var(--fn)}
+.prop-header{background:#0D0F12;color:#fff;padding:24px 28px;display:flex;align-items:center;justify-content:space-between}
+.prop-logo{font-size:20px;font-weight:700;letter-spacing:-.5px}
+.prop-logo span{color:var(--ac)}
+.prop-body{padding:24px 28px}
+.prop-section{margin-bottom:20px}
+.prop-section-title{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:#666;margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid #eee}
+.prop-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.prop-kv{display:flex;flex-direction:column;gap:2px}
+.prop-k{font-size:10px;color:#888}
+.prop-v{font-size:13px;font-weight:500;color:#111}
+.prop-item{border:1px solid #e5e7eb;border-radius:8px;margin-bottom:10px;overflow:hidden;display:grid;grid-template-columns:120px 1fr}
+.prop-item-img{background:#f3f4f6;display:flex;align-items:center;justify-content:center;padding:10px}
+.prop-item-body{padding:12px}
+.prop-item-title{font-size:13px;font-weight:600;color:#111;margin-bottom:4px}
+.prop-item-specs{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px}
+.prop-item-spec{background:#f3f4f6;border-radius:4px;padding:2px 6px;font-size:10px;color:#555}
+.prop-item-price{font-size:16px;font-weight:700;color:#111}
+.prop-total{background:#0D0F12;color:#fff;padding:16px 28px;display:flex;align-items:center;justify-content:space-between}
+.prop-qr{width:56px;height:56px;background:#fff;border-radius:6px;display:flex;align-items:center;justify-content:center}
+.prop-qr-inner{width:44px;height:44px}
+
+/* ── STOCK ALERTS ── */
+.sal{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg3);border-radius:7px;margin-bottom:7px}
+.sal.rd{border-left:3px solid var(--rd)}
+.sal.am{border-left:3px solid var(--am)}
+
+/* ── PORTAL ── */
+.pst{display:flex;align-items:flex-start;gap:10px;padding:11px;background:var(--bg3);border-radius:9px;border:1px solid var(--b);margin-bottom:7px}
+.psn{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex-shrink:0}
+
+/* ── MODAL ── */
+.ovl{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1000;align-items:center;justify-content:center}
+.ovl.on{display:flex}
+.mdl{background:var(--bg2);border:1px solid var(--b2);border-radius:12px;padding:22px;width:520px;max-width:94vw;max-height:88vh;overflow-y:auto}
+.mh{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.mhT{font-size:15px;font-weight:600}
+.mcl{background:transparent;border:none;color:var(--t3);font-size:22px;cursor:pointer;line-height:1;padding:0 2px}
+
+/* ── MOBILE ── */
+@media(min-width:769px) and (max-width:1100px){
+  #sb{width:180px}
+  .orc-layout{grid-template-columns:1fr 320px}
+}
+@media(max-width:768px){
+  #sb{position:fixed;left:-220px;top:0;height:100%;z-index:100;width:220px;box-shadow:none}
+  #sb.open{left:0;box-shadow:6px 0 30px rgba(0,0,0,.5)}
+  #sbo.open{display:block}
+  #hmb{display:block}
+  .srch{display:none}
+  #ct{padding:13px}
+  .g2,.g3{grid-template-columns:1fr!important}
+  .orc-layout{grid-template-columns:1fr!important}
+  .pv-wrap{position:static}
+  .prop-item{grid-template-columns:1fr}
+  .prop-item-img{min-height:100px}
+  .kgrid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}
+  .card{padding:14px}
+  .frow.c3,.frow.c4{grid-template-columns:1fr 1fr!important}
+  .mdl{border-radius:14px 14px 0 0;max-height:92vh;padding-bottom:calc(18px + env(safe-area-inset-bottom,0px))}
+  .ovl.on{align-items:flex-end}
+  .ni{min-height:40px}
+  .btn{min-height:36px}
+  table{min-width:440px}
+  #ia-grid{grid-template-columns:1fr!important}
+}
+@media(max-width:420px){
+  #ct{padding:10px}
+  .frow.c2{grid-template-columns:1fr!important}
+  .kgrid{grid-template-columns:1fr 1fr}
+}
+input[type=range]{width:100%;accent-color:var(--ac);cursor:pointer;height:34px;touch-action:none}
+
+/* ── PROPOSTA PRINT ── */
+.prop-wrap{background:#fff;color:#111;border-radius:10px;overflow:hidden;max-width:720px;margin:0 auto;font-family:'DM Sans',sans-serif;border:1px solid #e5e7eb}
+.prop-header{background:#0D0F12;color:#fff;padding:28px 32px;display:flex;align-items:center;justify-content:space-between}
+.prop-logo-wrap{display:flex;align-items:center;gap:12px}
+.prop-logo-icon{width:42px;height:42px;background:#3B82F6;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:#fff;flex-shrink:0}
+.prop-logo{font-size:20px;font-weight:700;letter-spacing:-.5px}
+.prop-logo span{color:#3B82F6}
+.prop-logo-sub{font-size:10px;color:rgba(255,255,255,.4);margin-top:2px}
+.prop-body{padding:28px 32px}
+.prop-section{margin-bottom:24px}
+.prop-section-title{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#9CA3AF;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid #F3F4F6}
+.prop-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.prop-kv{display:flex;flex-direction:column;gap:3px;background:#F9FAFB;border-radius:7px;padding:8px 10px}
+.prop-k{font-size:9px;color:#9CA3AF;text-transform:uppercase;letter-spacing:.05em}
+.prop-v{font-size:13px;font-weight:500;color:#111}
+/* item da proposta: imagem técnica + ilustração + specs */
+.prop-item{border:1px solid #E5E7EB;border-radius:10px;margin-bottom:14px;overflow:hidden}
+.prop-item-header{background:#F9FAFB;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #E5E7EB}
+.prop-item-num{width:24px;height:24px;background:#0D0F12;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0}
+.prop-item-title2{font-size:14px;font-weight:600;color:#111;margin-left:8px}
+.prop-item-price2{font-size:16px;font-weight:700;color:#111}
+.prop-item-body2{padding:14px 16px}
+.prop-item-imgs{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.prop-item-img2{background:#F3F4F6;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:12px;min-height:120px}
+.prop-item-img2 canvas,.prop-item-img2 img{max-width:100%;height:auto}
+.prop-item-label{font-size:9px;color:#9CA3AF;text-align:center;margin-top:5px;text-transform:uppercase;letter-spacing:.05em}
+.prop-item-specs2{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px}
+.prop-item-spec2{background:#F3F4F6;border-radius:5px;padding:3px 8px;font-size:11px;color:#555;font-weight:500}
+.prop-item-obs2{font-size:11px;color:#6B7280;font-style:italic;margin-top:4px}
+.prop-subtotal{background:#F9FAFB;border-radius:8px;padding:12px 16px;margin-bottom:14px}
+.prop-subtotal-row{display:flex;justify-content:space-between;padding:4px 0;font-size:12px;color:#6B7280}
+.prop-subtotal-row.total{border-top:1px solid #E5E7EB;margin-top:6px;padding-top:8px;font-size:15px;font-weight:700;color:#111}
+.prop-total{background:#0D0F12;color:#fff;padding:20px 32px;display:flex;align-items:center;justify-content:space-between}
+.prop-qr{width:60px;height:60px;background:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.prop-footer{background:#F9FAFB;padding:14px 32px;display:flex;align-items:center;justify-content:space-between;font-size:10px;color:#9CA3AF;border-top:1px solid #E5E7EB}
+/* aprovação digital strip */
+.prop-aprovacao{border:2px dashed #3B82F6;border-radius:10px;padding:14px 16px;margin-top:14px;display:flex;align-items:center;gap:14px;background:#EFF6FF}
+.prop-aprovacao-icon{font-size:28px;flex-shrink:0}
+.prop-aprovacao-title{font-size:13px;font-weight:600;color:#1D4ED8;margin-bottom:2px}
+.prop-aprovacao-sub{font-size:11px;color:#3B82F6}
+
+/* ── MODAL ENVIO ── */
+.envio-step{display:flex;align-items:center;gap:12px;padding:12px;background:var(--bg3);border-radius:9px;border:1px solid var(--b);margin-bottom:8px;cursor:pointer;transition:.13s}
+.envio-step:hover{border-color:var(--ac);background:var(--gl)}
+.envio-step-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.envio-step-title{font-size:13px;font-weight:500;color:var(--t)}
+.envio-step-sub{font-size:11px;color:var(--t3);margin-top:2px}
+
+@media print{
+  #sb,#tb,#orc-lista,#orc-editor,.ph,.envio-bar{display:none!important}
+  #ct{padding:0!important;overflow:visible!important}
+  #main{overflow:visible!important}
+  body,html{overflow:visible!important;height:auto!important;background:#fff!important}
+  #app{display:block!important;height:auto!important}
+  #orc-proposta{display:block!important}
+  .prop-wrap{border-radius:0!important;border:none!important;max-width:100%!important}
+  .prop-item-imgs canvas{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .pg{display:none!important}
+  #pg-orc{display:block!important}
+}
+
+</style>
+</head>
+<body>
+
+<!-- BOAS-VINDAS -->
+<div id="bv-ovl" style="position:fixed;inset:0;z-index:9999;background:rgba(13,15,18,.97);display:flex;align-items:center;justify-content:center;flex-direction:column">
+  <div style="text-align:center;animation:bvIn .55s cubic-bezier(.22,.68,0,1.2) both">
+    <div style="width:72px;height:72px;background:#3B82F6;border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:700;color:#fff;margin:0 auto 24px;box-shadow:0 0 40px rgba(59,130,246,.4)">T</div>
+    <div style="font-size:11px;color:#555D6E;letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px">Bem-vindo ao</div>
+    <div style="font-size:42px;font-weight:700;letter-spacing:-.8px;color:#F0F2F5;line-height:1">TESTEMT</div>
+    <div style="font-size:16px;color:#8B91A0;margin-top:6px;margin-bottom:6px">Olá, Matheus!</div>
+    <div style="font-size:12px;color:#555D6E">Sistema de Gestão de Esquadrias de Alumínio</div>
+    <div style="margin-top:32px;width:48px;height:3px;background:#3B82F6;border-radius:2px;margin-left:auto;margin-right:auto;animation:bvBar 2s ease both"></div>
+  </div>
+</div>
+<style>
+@keyframes bvIn{from{opacity:0;transform:translateY(16px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes bvBar{from{width:4px;opacity:.4}to{width:48px;opacity:1}}
+</style>
+
+<div id="app">
+<div id="sbo" onclick="togSb()"></div>
+
+<!-- SIDEBAR -->
+<div id="sb">
+  <div class="slogo">
+    <div class="slogo-i">T</div>
+    <div><div class="slogo-n">TESTEMT</div><div class="slogo-s">Esquadrias de Alumínio</div></div>
+  </div>
+  <div class="snav">
+    <div class="sg">Vendas</div>
+    <div class="ni on" id="ni-db" onclick="go('db',this)"><span class="ni-i">◼</span>Dashboard</div>
+    <div class="ni" id="ni-cli" onclick="go('cli',this)"><span class="ni-i">◎</span>Clientes</div>
+    <div class="ni" id="ni-orc" onclick="go('orc',this)"><span class="ni-i">◈</span>Orçamentos<span class="nbdg" style="background:var(--am)">3</span></div>
+    <div class="sg">Fábrica</div>
+    <div class="ni" id="ni-prod" onclick="go('prod',this)"><span class="ni-i">⚙</span>Produção<span class="nbdg" style="background:var(--gn)">12</span></div>
+    <div class="ni" id="ni-est" onclick="go('est',this)"><span class="ni-i">▦</span>Estoque<span class="nbdg" style="background:var(--rd)">2</span></div>
+    <div class="sg">Financeiro</div>
+    <div class="ni" id="ni-fin" onclick="go('fin',this)"><span class="ni-i">◑</span>Financeiro</div>
+    <div class="ni" id="ni-nfe" onclick="go('nfe',this)"><span class="ni-i">▤</span>Nota Fiscal</div>
+    <div class="ni" id="ni-ia" onclick="go('ia',this)"><span class="ni-i">✦</span>Assistente IA<span class="nbdg" style="background:linear-gradient(135deg,#8B5CF6,#3B82F6)">AI</span></div>
+    <div class="sg">Clientes</div>
+    <div class="ni" id="ni-por" onclick="go('por',this)"><span class="ni-i">◉</span>Portal</div>
+  </div>
+  <div class="sft">
+    <div class="av" style="width:28px;height:28px;background:var(--ac2)">AD</div>
+    <div><div style="font-size:11px;font-weight:500">Admin</div><div style="font-size:9px;color:var(--t3)">Administrador</div></div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div id="main">
+  <div id="tb">
+    <button id="hmb" onclick="togSb()">☰</button>
+    <div id="tb-t" style="font-size:14px;font-weight:500">Dashboard</div>
+    <div class="tb-r">
+      <div class="srch"><span style="color:var(--t3)">⌕</span><input type="text" placeholder="Buscar..."></div>
+      <button class="btn p" onclick="novoOrc()">+ Orçamento</button>
+    </div>
+  </div>
+
+  <div id="ct">
+
+<!-- ════════ DASHBOARD ════════ -->
+<div class="pg on" id="pg-db">
+  <div class="ph">
+    <div><div class="pt">Dashboard</div><div class="ps">Junho 2025</div></div>
+    <div style="display:flex;gap:6px">
+      <button class="btn s" onclick="go('orc',document.getElementById('ni-orc'))">Novo orçamento</button>
+    </div>
+  </div>
+  <div class="kgrid">
+    <div class="kc"><div class="kc-l">Faturamento mês</div><div class="kc-v" style="color:var(--gn)">R$ 347.820</div><div class="kc-d up">▲ 18,4% vs maio</div></div>
+    <div class="kc"><div class="kc-l">Orçamentos abertos</div><div class="kc-v">8</div><div class="kc-d" style="color:var(--t3)">3 aguardando aprovação</div></div>
+    <div class="kc"><div class="kc-l">Taxa de conversão</div><div class="kc-v" style="color:var(--ac)">64%</div><div class="kc-d up">▲ 8pp vs meta</div></div>
+    <div class="kc"><div class="kc-l">Em produção</div><div class="kc-v" style="color:var(--am)">12</div><div class="kc-d" style="color:var(--rd)">3 com atraso</div></div>
+    <div class="kc"><div class="kc-l">Lucro estimado</div><div class="kc-v" style="color:var(--gn)">R$ 89.430</div><div class="kc-d up">Margem 25,7%</div></div>
+    <div class="kc"><div class="kc-l">A receber</div><div class="kc-v">R$ 124k</div><div class="kc-d up">18 títulos</div></div>
+  </div>
+  <div class="g2">
+    <div class="card"><div class="ct">Vendas mensais 2025</div><div class="ch"><canvas id="ch-v"></canvas></div></div>
+    <div class="card"><div class="ct">Custos por categoria</div><div class="ch"><canvas id="ch-c"></canvas></div></div>
+  </div>
+  <div class="card mt">
+    <div class="ct">Pedidos recentes</div>
+    <div class="tw"><table>
+      <thead><tr><th>Cód.</th><th>Cliente</th><th>Produto</th><th>Valor</th><th>Status</th><th></th></tr></thead>
+      <tbody>
+        <tr><td class="mn">#241</td><td>Construtora Arco</td><td>Janela 2F Suprema 2000×1200</td><td style="color:var(--gn);font-weight:500">R$ 14.800</td><td><span class="pill a">Produção</span></td><td><button class="btn s" onclick="go('prod',document.getElementById('ni-prod'))">Ver produção</button></td></tr>
+        <tr><td class="mn">#240</td><td>Vila Nova Empr.</td><td>Porta Balcão Gold 2800×2100</td><td style="color:var(--gn);font-weight:500">R$ 22.400</td><td><span class="pill g">Entregue</span></td><td><button class="btn s">Ver</button></td></tr>
+        <tr><td class="mn">#239</td><td>João P. Silva</td><td>Fachada Integrada 3600×2400</td><td style="color:var(--gn);font-weight:500">R$ 38.900</td><td><span class="pill b">Aguardando</span></td><td><button class="btn s">Ver</button></td></tr>
+        <tr><td class="mn">#238</td><td>Tech Build Ltda</td><td>Painel Fixo Fachada 4000×3000</td><td style="color:var(--gn);font-weight:500">R$ 54.000</td><td><span class="pill g">Entregue</span></td><td><button class="btn s">Ver</button></td></tr>
+      </tbody>
+    </table></div>
+  </div>
+</div>
+
+<!-- ════════ CLIENTES ════════ -->
+<div class="pg" id="pg-cli">
+  <div class="ph">
+    <div><div class="pt">Clientes</div><div class="ps">42 cadastrados</div></div>
+    <button class="btn p" onclick="openMdl('cli')">+ Novo cliente</button>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="ct">Lista de clientes</div>
+      <div id="cli-list"></div>
+    </div>
+    <div class="card" id="cli-detail">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+        <div class="av" style="width:40px;height:40px;font-size:13px;background:var(--ac2)">CA</div>
+        <div>
+          <div id="cli-detail-name" style="font-size:15px;font-weight:600">Construtora Arco Ltda</div>
+          <div style="font-size:11px;color:var(--t3)">CNPJ · São Paulo/SP</div>
+        </div>
+        <button class="btn wa s" style="margin-left:auto" onclick="abrirWhatsAppCliente()">📱 WhatsApp</button>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:0">
+        <div class="sr"><span class="sk">Telefone</span><span class="sv">(11) 9 4832-1100</span></div>
+        <div class="sr"><span class="sk">E-mail</span><span class="sv">compras@arco.com.br</span></div>
+        <div class="sr"><span class="sk">Cidade</span><span class="sv">São Paulo / SP</span></div>
+        <div class="sr"><span class="sk">Total faturado</span><span class="sv" style="color:var(--gn)">R$ 68.400</span></div>
+      </div>
+      <div class="ct" style="margin-top:14px">Histórico</div>
+      <div class="tw"><table>
+        <thead><tr><th>Cód.</th><th>Data</th><th>Valor</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td class="mn">#241</td><td>02/06</td><td>R$ 14.800</td><td><span class="pill a">Produção</span></td></tr>
+          <tr><td class="mn">#218</td><td>15/04</td><td>R$ 22.100</td><td><span class="pill g">Entregue</span></td></tr>
+          <tr><td class="mn">#190</td><td>02/02</td><td>R$ 18.600</td><td><span class="pill g">Entregue</span></td></tr>
+        </tbody>
+      </table></div>
+      <div style="margin-top:12px;display:flex;gap:6px">
+        <button class="btn p s" onclick="go('orc',document.getElementById('ni-orc'));setTimeout(novoOrc,100)">Novo orçamento</button>
+        <button class="btn s" onclick="abrirWhatsAppCliente()">Enviar mensagem</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ ORÇAMENTOS ════════ -->
+<div class="pg" id="pg-orc">
+  <div class="ph">
+    <div><div class="pt">Orçamentos</div><div class="ps">Crie, visualize e envie propostas</div></div>
+    <button class="btn p" onclick="novoOrc()">+ Novo orçamento</button>
+  </div>
+
+  <!-- LISTA de orçamentos existentes -->
+  <div id="orc-lista">
+    <div class="card" style="margin-bottom:10px">
+      <div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap">
+        <span class="pill b" style="cursor:pointer;padding:4px 10px;font-size:11px">Todos (8)</span>
+        <span class="pill a" style="cursor:pointer;padding:4px 10px;font-size:11px">Aguardando (3)</span>
+        <span class="pill g" style="cursor:pointer;padding:4px 10px;font-size:11px">Aprovados (4)</span>
+        <span class="pill r" style="cursor:pointer;padding:4px 10px;font-size:11px">Reprovados (1)</span>
+      </div>
+      <div class="tw"><table>
+        <thead><tr><th>Cód.</th><th>Cliente</th><th>Obra</th><th>Valor total</th><th>Data</th><th>Status</th><th></th></tr></thead>
+        <tbody>
+          <tr><td class="mn">#ORC-244</td><td>Construtora Arco</td><td>Apto 42 Bl.B</td><td style="font-weight:500">R$ 14.800</td><td style="color:var(--t3)">03/06</td><td><span class="pill a">Aguardando</span></td>
+            <td style="display:flex;gap:4px;padding:9px 10px">
+              <button class="btn s" onclick="abrirProposta()">Ver proposta</button>
+              <button class="btn wa s" onclick="enviarWhatsAppOrc('#ORC-244','Construtora Arco')">WhatsApp</button>
+            </td></tr>
+          <tr><td class="mn">#ORC-243</td><td>Vila Nova Empr.</td><td>Bloco B Fase 2</td><td style="font-weight:500">R$ 22.400</td><td style="color:var(--t3)">02/06</td><td><span class="pill g">Aprovado</span></td>
+            <td style="display:flex;gap:4px;padding:9px 10px">
+              <button class="btn s" onclick="abrirProposta()">Ver proposta</button>
+              <button class="btn s p" onclick="go('prod',document.getElementById('ni-prod'))">→ Produção</button>
+            </td></tr>
+          <tr><td class="mn">#ORC-242</td><td>João P. Silva</td><td>Residência</td><td style="font-weight:500">R$ 38.900</td><td style="color:var(--t3)">01/06</td><td><span class="pill a">Aguardando</span></td>
+            <td style="display:flex;gap:4px;padding:9px 10px">
+              <button class="btn s" onclick="abrirProposta()">Ver proposta</button>
+              <button class="btn wa s" onclick="enviarWhatsAppOrc('#ORC-242','Joao P. Silva')">WhatsApp</button>
+            </td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+
+  <!-- EDITOR de novo orçamento (oculto por padrão) -->
+  <div id="orc-editor" style="display:none">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+      <button class="btn s" onclick="fecharEditor()">← Voltar</button>
+      <div style="font-size:16px;font-weight:600">Novo orçamento</div>
+    </div>
+
+    <div class="orc-layout">
+      <!-- coluna esquerda: formulário -->
+      <div>
+        <!-- Dados do cliente/obra -->
+        <div class="card" style="margin-bottom:10px">
+          <div class="ct">Cliente e obra</div>
+          <div class="frow c2">
+            <div class="fl"><label>Cliente</label>
+              <select id="e-cli" onchange="updPv()">
+                <option>Construtora Arco Ltda</option>
+                <option>Vila Nova Empreendimentos</option>
+                <option>João Pedro Silva</option>
+                <option>Tech Build Ltda</option>
+                <option>+ Novo cliente</option>
+              </select>
+            </div>
+            <div class="fl"><label>Obra / Referência</label><input id="e-obra" type="text" placeholder="Ex: Apto 42 — Bloco B" oninput="updPv()"></div>
+          </div>
+          <div class="frow c3">
+            <div class="fl"><label>Validade da proposta</label><input type="date" value="2025-06-30"></div>
+            <div class="fl"><label>Prazo de entrega</label><input type="text" placeholder="Ex: 30 dias"></div>
+            <div class="fl"><label>Pagamento</label>
+              <select>
+                <option>50% + 50% entrega</option>
+                <option>À vista</option>
+                <option>30/60/90</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Itens do orçamento -->
+        <div style="display:flex;gap:6px;margin-bottom:8px;align-items:center">
+          <span style="font-size:12px;font-weight:500;color:var(--t2)">Itens do orçamento</span>
+          <button class="btn s" onclick="openCatalogo()" style="margin-left:auto;border-color:var(--ac);color:var(--ac)">⚙ Gerenciar catálogo</button>
+        </div>
+        <div id="itens-wrap"></div>
+        <button class="btn s" onclick="addItem()" style="margin-bottom:12px;width:100%;justify-content:center;border-style:dashed">+ Adicionar item</button>
+
+        <!-- Observações e totais -->
+        <div class="card">
+          <div class="frow c2" style="margin-bottom:0">
+            <div class="fl"><label>Observações</label><textarea id="e-obs" placeholder="Condições, garantias, instalação..."></textarea></div>
+            <div>
+              <div style="background:var(--bg3);border-radius:8px;padding:12px">
+                <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--b)">
+                  <span style="font-size:11px;color:var(--t3)">Subtotal materiais</span>
+                  <span style="font-size:11px;font-weight:500" id="tot-mat">R$ 0</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--b)">
+                  <span style="font-size:11px;color:var(--t3)">Mão de obra</span>
+                  <span style="font-size:11px;font-weight:500" id="tot-mo">R$ 0</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;padding:7px 0 0">
+                  <span style="font-size:13px;font-weight:600">Total</span>
+                  <span style="font-size:18px;font-weight:700;color:var(--gn)" id="tot-geral">R$ 0</span>
+                </div>
+              </div>
+              <div style="display:flex;gap:6px;margin-top:10px;flex-direction:column">
+                <button class="btn p" style="width:100%;justify-content:center" onclick="abrirProposta()">📄 Visualizar proposta</button>
+                <button class="btn wa" style="width:100%;justify-content:center" onclick="enviarWhatsApp()">📱 Enviar via WhatsApp</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- coluna direita: projeto visual -->
+      <div class="pv-wrap">
+        <div class="pv-tabs">
+          <div class="pvt on" onclick="setPvTab('dt',this)">Desenho técnico</div>
+          <div class="pvt" onclick="setPvTab('il',this)">Ilustração</div>
+        </div>
+        <div class="pv-canvas" id="pv-dt"><canvas id="cv-dt" width="340" height="220"></canvas></div>
+        <div class="pv-canvas" id="pv-il" style="display:none"><canvas id="cv-il" width="340" height="220"></canvas></div>
+        <div class="pv-info">
+          <div class="pv-spec" id="pv-tags">
+            <span class="pv-tag">Selecione um item</span>
+          </div>
+          <div class="pv-price" id="pv-price">—</div>
+          <div class="pv-sub" id="pv-sub">configure as medidas e materiais</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROPOSTA VISUAL (oculta por padrão) -->
+  <div id="orc-proposta" style="display:none">
+    <!-- barra de ações -->
+    <div class="envio-bar" style="background:var(--bg2);border:1px solid var(--b);border-radius:12px;padding:14px 18px;margin-bottom:14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+      <button class="btn s" onclick="fecharProposta()">← Voltar</button>
+      <div style="font-size:15px;font-weight:600;flex:1;min-width:120px">Proposta Comercial</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+        <button class="btn s" onclick="imprimirProposta()" style="display:flex;align-items:center;gap:5px">
+          <span>🖨</span> Imprimir / Salvar PDF
+        </button>
+        <button class="btn wa s" onclick="enviarWhatsApp()" style="display:flex;align-items:center;gap:5px">
+          <span>📱</span> WhatsApp
+        </button>
+        <button class="btn s" onclick="openEnvioEmail()" style="display:flex;align-items:center;gap:5px;border-color:var(--ac);color:var(--ac)">
+          <span>✉</span> E-mail
+        </button>
+        <button class="btn p s" onclick="copiarLink()" style="display:flex;align-items:center;gap:5px">
+          <span>🔗</span> Copiar link
+        </button>
+      </div>
+    </div>
+    <!-- status de envio -->
+    <div id="envio-status" style="display:none;background:var(--gnb);border:1px solid var(--gn);border-radius:8px;padding:10px 14px;margin-bottom:12px;font-size:12px;color:var(--gn);display:flex;align-items:center;gap:8px">
+      <span>✓</span><span id="envio-status-txt"></span>
+    </div>
+    <div class="prop-wrap" id="proposta-html"></div>
+  </div>
+</div>
+
+<!-- ════════ PRODUÇÃO ════════ -->
+<div class="pg" id="pg-prod">
+  <div class="ph">
+    <div><div class="pt">Produção</div><div class="ps">12 ordens ativas · 3 com atraso</div></div>
+    <button class="btn p s" onclick="novaOP()">+ Nova OP</button>
+  </div>
+  <div class="kb" id="kb"></div>
+</div>
+
+<!-- ════════ ESTOQUE ════════ -->
+<div class="pg" id="pg-est">
+  <div class="ph">
+    <div><div class="pt">Estoque</div><div class="ps">2 itens em alerta</div></div>
+    <button class="btn p s" onclick="openMdl('entrada')">+ Registrar entrada</button>
+  </div>
+  <div class="g2">
+    <div>
+      <div class="card" style="margin-bottom:10px">
+        <div class="ct">Alertas</div>
+        <div class="sal rd"><span style="font-size:16px">⚠️</span><div><div style="font-size:12px;font-weight:500">Perfil Suprema — Trilho inferior</div><div style="font-size:10px;color:var(--t3)">Atual: 12 barras · Mínimo: 50</div></div><span style="margin-left:auto;font-size:11px;font-weight:600;color:var(--rd)">CRÍTICO</span></div>
+        <div class="sal am"><span style="font-size:16px">⚠️</span><div><div style="font-size:12px;font-weight:500">Borracha vedação 8mm</div><div style="font-size:10px;color:var(--t3)">Atual: 28m · Mínimo: 40m</div></div><span style="margin-left:auto;font-size:11px;font-weight:600;color:var(--am)">BAIXO</span></div>
+      </div>
+      <div class="card">
+        <div class="ct">Últimas movimentações</div>
+        <div class="tw"><table>
+          <thead><tr><th>Material</th><th>Tipo</th><th>Qtd</th><th>Data</th></tr></thead>
+          <tbody>
+            <tr><td>Vidro incolor 6mm</td><td><span class="pill g">Entrada</span></td><td>120 m²</td><td style="color:var(--t3)">03/06</td></tr>
+            <tr><td>Perfil Gold — Folha</td><td><span class="pill r">Saída</span></td><td>38 barras</td><td style="color:var(--t3)">02/06</td></tr>
+            <tr><td>Ferragem correr 1,5m</td><td><span class="pill g">Entrada</span></td><td>80 un</td><td style="color:var(--t3)">01/06</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+    </div>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;margin-bottom:12px"><span class="ct" style="margin:0">Posição atual</span><button class="btn s">Exportar</button></div>
+      <div class="tw"><table>
+        <thead><tr><th>Material</th><th>Un.</th><th>Atual</th><th>Mín.</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>Vidro incolor 6mm</td><td>m²</td><td>340</td><td>100</td><td><span class="pill g">OK</span></td></tr>
+          <tr><td>Vidro fumê 6mm</td><td>m²</td><td>85</td><td>50</td><td><span class="pill g">OK</span></td></tr>
+          <tr><td>Perfil Suprema trilho</td><td>barra</td><td>12</td><td>50</td><td><span class="pill r">Crítico</span></td></tr>
+          <tr><td>Perfil Gold folha</td><td>barra</td><td>74</td><td>40</td><td><span class="pill g">OK</span></td></tr>
+          <tr><td>Borracha vedação 8mm</td><td>m</td><td>28</td><td>40</td><td><span class="pill a">Baixo</span></td></tr>
+          <tr><td>Ferragem correr 1,5m</td><td>un</td><td>112</td><td>30</td><td><span class="pill g">OK</span></td></tr>
+          <tr><td>Silicone estrutural</td><td>bisn.</td><td>24</td><td>10</td><td><span class="pill g">OK</span></td></tr>
+          <tr><td>Puxador embutir</td><td>un</td><td>45</td><td>20</td><td><span class="pill g">OK</span></td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ FINANCEIRO ════════ -->
+<div class="pg" id="pg-fin">
+  <div class="ph">
+    <div><div class="pt">Financeiro</div><div class="ps">Junho 2025</div></div>
+    <button class="btn p s" onclick="openMdl('lanc')">+ Lançamento</button>
+  </div>
+  <div class="kgrid">
+    <div class="kc"><div class="kc-l">A receber</div><div class="kc-v" style="color:var(--gn)">R$ 124.800</div><div class="kc-d up">18 títulos</div></div>
+    <div class="kc"><div class="kc-l">A pagar</div><div class="kc-v" style="color:var(--rd)">R$ 48.200</div><div class="kc-d">12 vencimentos</div></div>
+    <div class="kc"><div class="kc-l">Saldo</div><div class="kc-v">R$ 76.600</div><div class="kc-d up">Positivo</div></div>
+    <div class="kc"><div class="kc-l">Inadimplência</div><div class="kc-v" style="color:var(--rd)">R$ 12.400</div><div class="kc-d dn">2 clientes</div></div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="ct">DRE Gerencial — Junho</div>
+      <table><tbody>
+        <tr><td style="padding:6px 4px;color:var(--t2)">Receita bruta</td><td style="text-align:right;font-weight:500;padding:6px 4px">R$ 347.820</td></tr>
+        <tr><td style="padding:5px 4px 5px 16px;font-size:11px;color:var(--t3)">(−) Impostos</td><td style="text-align:right;color:var(--rd);font-size:11px;padding:5px 4px">− R$ 31.303</td></tr>
+        <tr><td style="padding:6px 4px;color:var(--t2)">Receita líquida</td><td style="text-align:right;font-weight:500;padding:6px 4px">R$ 316.517</td></tr>
+        <tr><td style="padding:5px 4px 5px 16px;font-size:11px;color:var(--t3)">(−) CMV</td><td style="text-align:right;color:var(--rd);font-size:11px;padding:5px 4px">− R$ 178.200</td></tr>
+        <tr style="border-top:1px solid var(--b)"><td style="padding:7px 4px;font-weight:600">Lucro bruto</td><td style="text-align:right;font-weight:700;color:var(--gn);padding:7px 4px">R$ 138.317</td></tr>
+        <tr><td style="padding:5px 4px 5px 16px;font-size:11px;color:var(--t3)">(−) Despesas</td><td style="text-align:right;color:var(--rd);font-size:11px;padding:5px 4px">− R$ 48.887</td></tr>
+        <tr style="border-top:1px solid var(--b)"><td style="padding:7px 4px;font-weight:700;font-size:14px">Lucro líquido</td><td style="text-align:right;font-weight:700;color:var(--gn);font-size:16px;padding:7px 4px">R$ 89.430</td></tr>
+        <tr><td style="padding:5px 4px;color:var(--t3)">Margem</td><td style="text-align:right;color:var(--ac);font-weight:500;padding:5px 4px">25,7%</td></tr>
+      </tbody></table>
+    </div>
+    <div class="card">
+      <div class="ct">Contas a receber</div>
+      <div class="tw"><table>
+        <thead><tr><th>Cliente</th><th>Valor</th><th>Venc.</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>Construtora Arco</td><td>R$ 14.800</td><td>10/06</td><td><span class="pill a">A vencer</span></td></tr>
+          <tr><td>Vila Nova Empr.</td><td>R$ 22.400</td><td>08/06</td><td><span class="pill a">A vencer</span></td></tr>
+          <tr><td>João P. Silva</td><td>R$ 12.400</td><td>01/06</td><td><span class="pill r">Vencido</span></td></tr>
+          <tr><td>Tech Build Ltda</td><td>R$ 54.000</td><td>20/06</td><td><span class="pill g">OK</span></td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ NF-e ════════ -->
+<div class="pg" id="pg-nfe">
+  <div class="ph">
+    <div><div class="pt">Nota Fiscal</div><div class="ps">NF-e e NFS-e</div></div>
+    <button class="btn p s" onclick="nfeMsgFutura()">+ Emitir NF-e</button>
+  </div>
+  <!-- AVISO MÓDULO FUTURO -->
+  <div style="background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.35);border-radius:10px;padding:14px 18px;margin-bottom:16px;display:flex;align-items:flex-start;gap:12px">
+    <span style="font-size:22px;flex-shrink:0">🔧</span>
+    <div>
+      <div style="font-size:13px;font-weight:600;color:var(--am);margin-bottom:4px">Módulo em implementação futura</div>
+      <div style="font-size:12px;color:var(--t2);line-height:1.6">A emissão real de NF-e e NFS-e requer integração com a SEFAZ via certificado digital A1/A3 e backend dedicado. Este módulo será implementado na próxima fase do sistema, utilizando uma API de emissão homologada (Focus NFe, Webmania ou similar). <strong style="color:var(--am)">Por enquanto, os dados exibidos são demonstrativos.</strong></div>
+    </div>
+  </div>
+  <div class="card">
+    <div style="font-size:11px;color:var(--t3);margin-bottom:10px">Prévia do histórico (demonstrativo)</div>
+    <div class="tw"><table>
+      <thead><tr><th>Número</th><th>Cliente</th><th>Valor</th><th>Emissão</th><th>Status</th><th></th></tr></thead>
+      <tbody>
+        <tr><td class="mn">NF-e 000421</td><td>Vila Nova Empr.</td><td>R$ 22.400</td><td>03/06/25</td><td><span class="pill g">Autorizada</span></td><td><button class="btn s" onclick="nfeMsgFutura()">XML</button></td></tr>
+        <tr><td class="mn">NF-e 000420</td><td>Tech Build Ltda</td><td>R$ 54.000</td><td>01/06/25</td><td><span class="pill g">Autorizada</span></td><td><button class="btn s" onclick="nfeMsgFutura()">XML</button></td></tr>
+        <tr><td class="mn">NF-e 000419</td><td>Construtora Arco</td><td>R$ 18.600</td><td>28/05/25</td><td><span class="pill g">Autorizada</span></td><td><button class="btn s" onclick="nfeMsgFutura()">XML</button></td></tr>
+        <tr><td class="mn">NF-e 000418</td><td>Obra Bela Vista</td><td>R$ 9.800</td><td>20/05/25</td><td><span class="pill a">Pendente</span></td><td><button class="btn s" onclick="nfeMsgFutura()">Autorizar</button></td></tr>
+      </tbody>
+    </table></div>
+  </div>
+</div>
+
+<!-- ════════ PORTAL ════════ -->
+<div class="pg" id="pg-por">
+  <div class="ph">
+    <div><div class="pt">Portal do Cliente</div><div class="ps">Rastreio de pedidos</div></div>
+    <button class="btn p s" onclick="enviarLinkPortal()">Enviar link</button>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="ct">Pedido #ORC-241 — Construtora Arco</div>
+      <div class="pst"><div class="psn" style="background:var(--gnb);color:var(--gn)">✓</div><div><div style="font-size:12px;font-weight:500">Proposta aprovada</div><div style="font-size:10px;color:var(--t3)">30/05 — Assinatura digital registrada</div></div></div>
+      <div class="pst"><div class="psn" style="background:var(--gnb);color:var(--gn)">✓</div><div><div style="font-size:12px;font-weight:500">Ordem de produção gerada</div><div style="font-size:10px;color:var(--t3)">31/05 — OP-042</div></div></div>
+      <div class="pst"><div class="psn" style="background:var(--gnb);color:var(--gn)">✓</div><div><div style="font-size:12px;font-weight:500">Corte e usinagem</div><div style="font-size:10px;color:var(--t3)">02/06 — Concluído</div></div></div>
+      <div class="pst"><div class="psn" style="background:var(--gl);color:var(--ac)">→</div><div><div style="font-size:12px;font-weight:500">Montagem e vidraçaria</div><div style="font-size:10px;color:var(--t3)">Em andamento · Previsão: 06/06</div></div></div>
+      <div class="pst"><div class="psn" style="background:var(--bg4);color:var(--t3)">5</div><div><div style="font-size:12px;font-weight:500">Conferência e expedição</div><div style="font-size:10px;color:var(--t3)">Previsão: 08/06</div></div></div>
+      <div class="pst"><div class="psn" style="background:var(--bg4);color:var(--t3)">6</div><div><div style="font-size:12px;font-weight:500">Entrega</div><div style="font-size:10px;color:var(--t3)">Previsão: 10/06</div></div></div>
+    </div>
+    <div class="card">
+      <div class="ct">Clientes com acesso</div>
+      <div class="tw"><table>
+        <thead><tr><th>Cliente</th><th>Último acesso</th><th>Pedidos</th></tr></thead>
+        <tbody>
+          <tr><td>Construtora Arco</td><td style="color:var(--t3)">Hoje 09:14</td><td>3</td></tr>
+          <tr><td>Vila Nova Empr.</td><td style="color:var(--t3)">Ontem 16:42</td><td>2</td></tr>
+          <tr><td>Tech Build Ltda</td><td style="color:var(--t3)">02/06 11:20</td><td>1</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════ IA ════════ -->
+<div class="pg" id="pg-ia">
+  <div class="ph">
+    <div><div class="pt">Assistente IA</div><div class="ps">Pergunte qualquer coisa sobre o sistema</div></div>
+  </div>
+  <div id="ia-grid" style="display:grid;grid-template-columns:1fr 300px;gap:14px;align-items:start">
+    <div class="card" style="display:flex;flex-direction:column;height:560px">
+      <div id="ia-msgs" style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:10px;padding-bottom:4px;-webkit-overflow-scrolling:touch"></div>
+      <div style="border-top:1px solid var(--b);padding-top:12px;margin-top:12px;display:flex;gap:8px">
+        <input id="ia-input" type="text" placeholder="Ex: Quais orçamentos estão aguardando aprovação?" style="flex:1;background:var(--bg3);border:1px solid var(--b);border-radius:7px;padding:9px 12px;color:var(--t);font-family:var(--fn);font-size:13px;outline:none" onkeydown="if(event.key==='Enter')sendIA()">
+        <button class="btn p" onclick="sendIA()">Enviar</button>
+      </div>
+    </div>
+    <div>
+      <div class="card" style="margin-bottom:10px">
+        <div class="ct">Sugestões rápidas</div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <button class="btn s" style="text-align:left;width:100%;justify-content:flex-start;white-space:normal;height:auto;padding:7px 10px" onclick="perguntaIA('Quais orçamentos estão aguardando aprovação?')">Orçamentos aguardando aprovação</button>
+          <button class="btn s" style="text-align:left;width:100%;justify-content:flex-start;white-space:normal;height:auto;padding:7px 10px" onclick="perguntaIA('Quais itens estão em alerta de estoque?')">Alertas de estoque</button>
+          <button class="btn s" style="text-align:left;width:100%;justify-content:flex-start;white-space:normal;height:auto;padding:7px 10px" onclick="perguntaIA('Qual o faturamento do mês de junho?')">Faturamento do mês</button>
+          <button class="btn s" style="text-align:left;width:100%;justify-content:flex-start;white-space:normal;height:auto;padding:7px 10px" onclick="perguntaIA('Quais pedidos estão em atraso na produção?')">Pedidos em atraso</button>
+          <button class="btn s" style="text-align:left;width:100%;justify-content:flex-start;white-space:normal;height:auto;padding:7px 10px" onclick="perguntaIA('Qual a situação financeira atual da empresa?')">Situação financeira</button>
+          <button class="btn s" style="text-align:left;width:100%;justify-content:flex-start;white-space:normal;height:auto;padding:7px 10px" onclick="perguntaIA('Quem são os clientes mais rentáveis?')">Clientes mais rentáveis</button>
+          <button class="btn s" style="text-align:left;width:100%;justify-content:flex-start;white-space:normal;height:auto;padding:7px 10px" onclick="perguntaIA('Como está a produção hoje?')">Situação da produção</button>
+          <button class="btn s" style="text-align:left;width:100%;justify-content:flex-start;white-space:normal;height:auto;padding:7px 10px" onclick="perguntaIA('Quais são os produtos mais vendidos?')">Produtos mais vendidos</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="ct">O que a IA sabe</div>
+        <div style="font-size:11px;color:var(--t3);line-height:1.7">✓ Todos os orçamentos e status<br>✓ Clientes e histórico<br>✓ Produção e Kanban<br>✓ Estoque e alertas<br>✓ Financeiro e DRE<br>✓ Pedidos em atraso<br>✓ Métricas e KPIs</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  </div><!-- #ct -->
+</div><!-- #main -->
+
+<!-- MODAL novo cliente -->
+<div class="ovl" id="ovl" onclick="if(event.target===this)closeMdl()">
+  <div class="mdl">
+    <div class="mh"><div class="mhT" id="mdl-t">Novo cliente</div><button class="mcl" onclick="closeMdl()">×</button></div>
+    <div id="mdl-b"></div>
+  </div>
+</div>
+
+</div><!-- #app -->
+
+<script>
+// =========================================================
+// TESTEMT — JavaScript principal
+// Sem template literals para máxima compatibilidade
+// =========================================================
+
+// ── UTILITÁRIOS ──
+function qs(s){return document.querySelector(s);}
+function qsa(s){return document.querySelectorAll(s);}
+function fmt2(v){return 'R$ '+Math.round(v).toLocaleString('pt-BR');}
+function showToast(msg,type){
+  var colors={info:'#3B82F6',amber:'#F59E0B',green:'#10B981',red:'#EF4444'};
+  var c=colors[type]||colors.info;
+  var t=document.createElement('div');
+  t.style.cssText='position:fixed;bottom:24px;right:24px;z-index:9000;background:#13161B;border:1px solid '+c+';border-radius:10px;padding:12px 18px;font-size:13px;color:#F0F2F5;max-width:340px;line-height:1.5;box-shadow:0 4px 20px rgba(0,0,0,.4);animation:bvIn .3s ease both;pointer-events:none;';
+  t.innerHTML='<span style="color:'+c+';font-weight:600">'+msg+'</span>';
+  document.body.appendChild(t);
+  setTimeout(function(){
+    t.style.transition='opacity .3s';
+    t.style.opacity='0';
+    setTimeout(function(){if(t.parentNode)t.parentNode.removeChild(t);},300);
+  },4000);
+}
+
+// ── BOAS-VINDAS auto-hide ──
+setTimeout(function(){
+  var el=document.getElementById('bv-ovl');
+  if(el){
+    el.style.transition='opacity .6s';
+    el.style.opacity='0';
+    setTimeout(function(){if(el.parentNode)el.parentNode.removeChild(el);},620);
+  }
+},2200);
+
+// ── NAVEGAÇÃO ──
+var ptitles={
+  db:'Dashboard',cli:'Clientes',orc:'Orcamentos',
+  prod:'Producao',est:'Estoque',fin:'Financeiro',
+  nfe:'Nota Fiscal',por:'Portal Cliente',ia:'Assistente IA'
+};
+
+function go(id,el){
+  // fecha sidebar mobile
+  var sb=document.getElementById('sb');
+  var sbo=document.getElementById('sbo');
+  if(sb) sb.classList.remove('open');
+  if(sbo) sbo.classList.remove('open');
+  // troca página
+  qsa('.pg').forEach(function(p){p.classList.remove('on');});
+  qsa('.ni').forEach(function(n){n.classList.remove('on');});
+  var pg=document.getElementById('pg-'+id);
+  if(pg) pg.classList.add('on');
+  if(el) el.classList.add('on');
+  var tbt=document.getElementById('tb-t');
+  if(tbt) tbt.textContent=ptitles[id]||id;
+  // inicializa módulos ao entrar
+  if(id==='db') initCharts();
+  if(id==='prod') initKb();
+  if(id==='ia'){
+    var msgs=document.getElementById('ia-msgs');
+    if(msgs&&msgs.children.length===0){
+      addIAMsg('Ola, Matheus! Sou o assistente do TESTEMT. Tenho acesso a todos os dados do sistema. Como posso ajudar?','ia');
+    }
+  }
+}
+
+function togSb(){
+  var sb=document.getElementById('sb');
+  var sbo=document.getElementById('sbo');
+  if(sb) sb.classList.toggle('open');
+  if(sbo) sbo.classList.toggle('open');
+}
+
+// ── MODAL ──
+function openMdl(tipo){
+  var titulo='';
+  var corpo='';
+
+  if(tipo==='cli'){
+    titulo='Novo cliente';
+    corpo='<div style="display:flex;flex-direction:column;gap:10px">'+
+      '<div class="frow c2">'+
+        '<div class="fl"><label>Nome / Razao Social</label><input type="text" placeholder="Nome completo"></div>'+
+        '<div class="fl"><label>CPF / CNPJ</label><input type="text" placeholder="000.000.000-00"></div>'+
+      '</div>'+
+      '<div class="frow c2">'+
+        '<div class="fl"><label>WhatsApp</label><input type="text" placeholder="(11) 9 0000-0000"></div>'+
+        '<div class="fl"><label>E-mail</label><input type="email" placeholder="email@exemplo.com"></div>'+
+      '</div>'+
+      '<div class="frow c2">'+
+        '<div class="fl"><label>Cidade</label><input type="text" placeholder="Sao Paulo"></div>'+
+        '<div class="fl"><label>Estado</label><select><option>SP</option><option>RJ</option><option>MG</option><option>PR</option><option>SC</option><option>RS</option></select></div>'+
+      '</div>'+
+      '<div class="fl"><label>Observacoes</label><textarea placeholder="Informacoes adicionais..."></textarea></div>'+
+      '<div style="display:flex;justify-content:flex-end;gap:6px;margin-top:4px">'+
+        '<button class="btn s" onclick="closeMdl()">Cancelar</button>'+
+        '<button class="btn p s" onclick="showToast(\'Cliente salvo com sucesso!\',\'green\');closeMdl()">Salvar</button>'+
+      '</div></div>';
+  }
+  else if(tipo==='op'){
+    titulo='Nova Ordem de Producao';
+    corpo='<div style="display:flex;flex-direction:column;gap:10px">'+
+      '<div class="frow c2">'+
+        '<div class="fl"><label>Orcamento</label><select><option>#ORC-244 - Construtora Arco</option><option>#ORC-243 - Vila Nova</option><option>#ORC-242 - Joao P. Silva</option></select></div>'+
+        '<div class="fl"><label>Responsavel</label><select><option>Marcos Ferreira</option><option>Ana Santos</option><option>Ricardo Lima</option></select></div>'+
+      '</div>'+
+      '<div class="frow c2">'+
+        '<div class="fl"><label>Inicio previsto</label><input type="date"></div>'+
+        '<div class="fl"><label>Prazo de entrega</label><input type="date"></div>'+
+      '</div>'+
+      '<div class="fl"><label>Observacoes</label><textarea placeholder="Instrucoes de producao..."></textarea></div>'+
+      '<div style="display:flex;justify-content:flex-end;gap:6px;margin-top:4px">'+
+        '<button class="btn s" onclick="closeMdl()">Cancelar</button>'+
+        '<button class="btn p s" onclick="showToast(\'Ordem de Producao criada!\',\'green\');closeMdl()">Criar OP</button>'+
+      '</div></div>';
+  }
+  else if(tipo==='entrada'){
+    titulo='Registrar Entrada de Estoque';
+    corpo='<div style="display:flex;flex-direction:column;gap:10px">'+
+      '<div class="frow c2">'+
+        '<div class="fl"><label>Material</label><select>'+
+          '<option>Vidro incolor 6mm</option><option>Perfil Gold - Folha</option>'+
+          '<option>Perfil Suprema - Trilho</option><option>Ferragem correr 1,5m</option>'+
+          '<option>Borracha vedacao 8mm</option><option>Silicone estrutural</option>'+
+        '</select></div>'+
+        '<div class="fl"><label>Fornecedor</label><input type="text" placeholder="Nome do fornecedor"></div>'+
+      '</div>'+
+      '<div class="frow c3">'+
+        '<div class="fl"><label>Quantidade</label><input type="number" placeholder="0"></div>'+
+        '<div class="fl"><label>Unidade</label><select><option>m2</option><option>barra</option><option>metro</option><option>unidade</option><option>kg</option></select></div>'+
+        '<div class="fl"><label>Nota fiscal</label><input type="text" placeholder="No NF"></div>'+
+      '</div>'+
+      '<div style="display:flex;justify-content:flex-end;gap:6px;margin-top:4px">'+
+        '<button class="btn s" onclick="closeMdl()">Cancelar</button>'+
+        '<button class="btn p s" onclick="showToast(\'Entrada registrada no estoque!\',\'green\');closeMdl()">Registrar</button>'+
+      '</div></div>';
+  }
+  else if(tipo==='lanc'){
+    titulo='Novo Lancamento Financeiro';
+    corpo='<div style="display:flex;flex-direction:column;gap:10px">'+
+      '<div class="frow c2">'+
+        '<div class="fl"><label>Tipo</label><select><option>A receber</option><option>A pagar</option></select></div>'+
+        '<div class="fl"><label>Categoria</label><select><option>Venda</option><option>Materia-prima</option><option>Mao de obra</option><option>Despesa operacional</option><option>Outros</option></select></div>'+
+      '</div>'+
+      '<div class="frow c2">'+
+        '<div class="fl"><label>Valor (R$)</label><input type="number" placeholder="0,00"></div>'+
+        '<div class="fl"><label>Vencimento</label><input type="date"></div>'+
+      '</div>'+
+      '<div class="frow c2">'+
+        '<div class="fl"><label>Cliente / Fornecedor</label><input type="text" placeholder="Nome"></div>'+
+        '<div class="fl"><label>Referencia</label><input type="text" placeholder="No pedido, NF..."></div>'+
+      '</div>'+
+      '<div style="display:flex;justify-content:flex-end;gap:6px;margin-top:4px">'+
+        '<button class="btn s" onclick="closeMdl()">Cancelar</button>'+
+        '<button class="btn p s" onclick="showToast(\'Lancamento registrado!\',\'green\');closeMdl()">Salvar</button>'+
+      '</div></div>';
+  }
+  else if(tipo==='email'){
+    titulo='Enviar proposta por e-mail';
+    var cliVal=document.getElementById('e-cli')?document.getElementById('e-cli').value:'Cliente';
+    var totVal=document.getElementById('tot-geral')?document.getElementById('tot-geral').textContent:'R$ 0';
+    var obraVal=document.getElementById('e-obra')?document.getElementById('e-obra').value:'Obra';
+    corpo='<div style="display:flex;flex-direction:column;gap:12px">'+
+      '<div style="background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.25);border-radius:8px;padding:10px 12px;font-size:12px;color:#3B82F6">'+
+        'A proposta sera anexada ao e-mail como PDF.'+
+      '</div>'+
+      '<div class="fl"><label>E-mail do destinatario</label>'+
+        '<input type="email" id="email-dest" placeholder="cliente@email.com" style="background:#1A1E26;border:1px solid rgba(255,255,255,.07);border-radius:7px;padding:8px 10px;color:#F0F2F5;font-family:inherit;font-size:13px;outline:none;width:100%">'+
+      '</div>'+
+      '<div class="fl"><label>Assunto</label>'+
+        '<input type="text" id="email-assunto" value="Proposta Comercial TESTEMT - '+obraVal+'" style="background:#1A1E26;border:1px solid rgba(255,255,255,.07);border-radius:7px;padding:8px 10px;color:#F0F2F5;font-family:inherit;font-size:13px;outline:none;width:100%">'+
+      '</div>'+
+      '<div class="fl"><label>Mensagem</label>'+
+        '<textarea id="email-msg" rows="4" style="background:#1A1E26;border:1px solid rgba(255,255,255,.07);border-radius:7px;padding:8px 10px;color:#F0F2F5;font-family:inherit;font-size:13px;outline:none;width:100%;resize:vertical">Prezado(a) '+cliVal+',\n\nSegue nossa proposta comercial.\nValor total: '+totVal+'\n\nAtenciosamente,\nEquipe TESTEMT</textarea>'+
+      '</div>'+
+      '<div style="display:flex;justify-content:flex-end;gap:8px;margin-top:4px">'+
+        '<button class="btn s" onclick="closeMdl()">Cancelar</button>'+
+        '<button class="btn p s" onclick="enviarEmail()">Enviar e-mail</button>'+
+      '</div></div>';
+  }
+  else { return; }
+
+  var tEl=document.getElementById('mdl-t');
+  var bEl=document.getElementById('mdl-b');
+  var ovl=document.getElementById('ovl');
+  if(tEl) tEl.textContent=titulo;
+  if(bEl) bEl.innerHTML=corpo;
+  if(ovl) ovl.classList.add('on');
+}
+
+function closeMdl(){
+  var ovl=document.getElementById('ovl');
+  if(ovl) ovl.classList.remove('on');
+}
+
+// ── CHARTS ──
+var chartsOk=false;
+function initCharts(){
+  if(chartsOk)return;
+  if(!window.Chart)return;
+  chartsOk=true;
+  var ts2={color:'rgba(255,255,255,.5)',font:{family:'DM Sans,sans-serif',size:10}};
+  var gs2='rgba(255,255,255,.04)';
+  var tp2={backgroundColor:'#1A1E26',borderColor:'rgba(255,255,255,.12)',borderRadius:7,
+    bodyColor:'rgba(255,255,255,.8)',bodyFont:{family:'DM Sans',size:11},
+    titleColor:'rgba(255,255,255,.4)',titleFont:{family:'DM Sans',size:10}};
+  var ax2={
+    x:{ticks:ts2,grid:{color:gs2},border:{display:false}},
+    y:{ticks:ts2,grid:{color:gs2},border:{display:false}}
+  };
+  var base2={responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false},tooltip:tp2}};
+  var cv=document.getElementById('ch-v');
+  var cc=document.getElementById('ch-c');
+  if(cv) new Chart(cv,{type:'bar',data:{
+    labels:['Jan','Fev','Mar','Abr','Mai','Jun'],
+    datasets:[{data:[180000,220000,195000,280000,292000,347820],
+      backgroundColor:'rgba(59,130,246,.75)',borderRadius:5,borderSkipped:false}]
+  },options:Object.assign({},base2,{scales:ax2})});
+  if(cc) new Chart(cc,{type:'doughnut',data:{
+    labels:['Aluminio','Vidros','Ferragens','M.O.','Outros'],
+    datasets:[{data:[42,28,12,13,5],
+      backgroundColor:['#3B82F6','#10B981','#8B5CF6','#F59E0B','#6B7280'],borderWidth:0}]
+  },options:{responsive:true,maintainAspectRatio:false,plugins:{
+    legend:{display:true,position:'right',labels:{color:'rgba(255,255,255,.6)',font:{family:'DM Sans',size:10},boxWidth:9,padding:8}},
+    tooltip:tp2
+  }}});
+}
+
+// ── KANBAN ARRASTÁVEL ──
+var kbData=[
+  {s:'Projeto',c:'#6B7280',cards:[{code:'OP-044',name:'Fachada Integrada',cli:'Joao P. Silva',d:2,late:false}]},
+  {s:'Corte',c:'#3B82F6',cards:[{code:'OP-043',name:'Jan. 4F Gold',cli:'Vila Nova',d:1,late:false},{code:'OP-042',name:'Jan. 2F Suprema',cli:'Arco',d:4,late:false}]},
+  {s:'Usinagem',c:'#8B5CF6',cards:[{code:'OP-041',name:'Porta Balcao Gold',cli:'Tech Build',d:3,late:false}]},
+  {s:'Montagem',c:'#F59E0B',cards:[{code:'OP-040',name:'Painel Fachada',cli:'Obra Bela',d:5,late:false},{code:'OP-039',name:'Jan. 2F Suprema',cli:'Arco',d:2,late:false}]},
+  {s:'Vidracaria',c:'#14B8A6',cards:[{code:'OP-038',name:'Porta balcao',cli:'Vila Nova',d:7,late:true}]},
+  {s:'Pintura',c:'#EC4899',cards:[{code:'OP-037',name:'Jan. 4F Gold',cli:'J.P.Silva',d:9,late:true}]},
+  {s:'Conferencia',c:'#10B981',cards:[{code:'OP-036',name:'Painel fixo',cli:'Tech Build',d:1,late:false}]},
+  {s:'Expedicao',c:'#F59E0B',cards:[{code:'OP-035',name:'Jan. 2F Suprema',cli:'Arco',d:12,late:true}]},
+  {s:'Entrega',c:'#6B7280',cards:[]}
+];
+var kbDragging=null;
+
+function kbCardHTML(c){
+  return '<div class="kbi" draggable="true"'+
+    ' ondragstart="kbDragStart(event,this)"'+
+    ' ondragend="kbDragEnd(event,this)"'+
+    ' ontouchstart="kbTouchStart(event,this)">'+
+    '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">'+
+    '<span class="kbi-c">'+c.code+'</span>'+
+    (c.late?'<span style="font-size:9px;color:#EF4444;font-weight:600">ATRASO</span>':'')+
+    '</div>'+
+    '<div class="kbi-n">'+c.name+'</div>'+
+    '<div class="kbi-k">'+c.cli+'</div>'+
+    '<div class="kbi-f">'+
+    '<span class="kbi-d'+(c.late?' lt':'')+'">'+c.d+' dias</span>'+
+    '<span class="kdot" style="background:'+(c.late?'#EF4444':'#10B981')+'"></span>'+
+    '</div></div>';
+}
+
+function initKb(){
+  var b=document.getElementById('kb');
+  if(!b||b.children.length)return;
+  kbData.forEach(function(col){
+    var stageid=col.s.replace(/[^a-zA-Z0-9]/g,'');
+    var el=document.createElement('div');
+    el.className='kbc';
+    el.dataset.stage=col.s;
+    el.innerHTML=
+      '<div class="kbh" style="border-top:3px solid '+col.c+';border-radius:7px 7px 0 0">'+
+        '<span>'+col.s+'</span>'+
+        '<span class="kbn" id="kbn-'+stageid+'">'+col.cards.length+'</span>'+
+      '</div>'+
+      '<div class="kbb" id="kbb-'+stageid+'">'+
+        col.cards.map(function(c){return kbCardHTML(c);}).join('')+
+      '</div>';
+    el.addEventListener('dragover',function(e){
+      e.preventDefault();
+      el.classList.add('drag-over');
+    });
+    el.addEventListener('dragleave',function(e){
+      if(!el.contains(e.relatedTarget)) el.classList.remove('drag-over');
+    });
+    el.addEventListener('drop',function(e){
+      e.preventDefault();
+      el.classList.remove('drag-over');
+      if(kbDragging){
+        var body=el.querySelector('.kbb');
+        if(body){
+          body.appendChild(kbDragging);
+          kbUpdateCounts();
+          showToast('Movido para: '+col.s,'green');
+        }
+      }
+    });
+    b.appendChild(el);
+  });
+  kbInitTouch();
+}
+
+function kbDragStart(e,card){
+  kbDragging=card;
+  card.style.opacity='0.4';
+  e.dataTransfer.effectAllowed='move';
+  e.dataTransfer.setData('text/plain','');
+}
+function kbDragEnd(e,card){
+  card.style.opacity='1';
+  qsa('.kbc').forEach(function(c){c.classList.remove('drag-over');});
+  kbDragging=null;
+}
+function kbUpdateCounts(){
+  qsa('.kbc').forEach(function(col){
+    var body=col.querySelector('.kbb');
+    var badge=col.querySelector('.kbn');
+    if(body&&badge) badge.textContent=body.querySelectorAll('.kbi').length;
+  });
+}
+
+// Touch drag
+var kbTouchCard=null,kbTouchClone=null,kbTouchOX=0,kbTouchOY=0;
+function kbInitTouch(){
+  document.addEventListener('touchmove',function(e){
+    if(!kbTouchCard)return;
+    e.preventDefault();
+    var t=e.touches[0];
+    if(kbTouchClone){
+      kbTouchClone.style.left=(t.clientX-kbTouchOX)+'px';
+      kbTouchClone.style.top=(t.clientY-kbTouchOY)+'px';
+    }
+    qsa('.kbc').forEach(function(c){c.classList.remove('drag-over');});
+    var el=document.elementFromPoint(t.clientX,t.clientY);
+    var col=el?el.closest('.kbc'):null;
+    if(col) col.classList.add('drag-over');
+  },{passive:false});
+  document.addEventListener('touchend',function(e){
+    if(!kbTouchCard)return;
+    if(kbTouchClone){kbTouchClone.parentNode&&kbTouchClone.parentNode.removeChild(kbTouchClone);kbTouchClone=null;}
+    var t=e.changedTouches[0];
+    var el=document.elementFromPoint(t.clientX,t.clientY);
+    var col=el?el.closest('.kbc'):null;
+    if(col){
+      var body=col.querySelector('.kbb');
+      if(body){body.appendChild(kbTouchCard);kbUpdateCounts();showToast('Movido para: '+(col.dataset.stage||''),'green');}
+    }
+    qsa('.kbc').forEach(function(c){c.classList.remove('drag-over');});
+    if(kbTouchCard) kbTouchCard.style.opacity='1';
+    kbTouchCard=null;
+  });
+}
+function kbTouchStart(e,card){
+  var touch=e.touches[0];
+  var rect=card.getBoundingClientRect();
+  kbTouchOX=touch.clientX-rect.left;
+  kbTouchOY=touch.clientY-rect.top;
+  kbTouchCard=card;
+  card.style.opacity='0.4';
+  kbTouchClone=card.cloneNode(true);
+  kbTouchClone.style.cssText='position:fixed;z-index:9000;width:'+rect.width+'px;opacity:.85;pointer-events:none;'+
+    'left:'+(touch.clientX-kbTouchOX)+'px;top:'+(touch.clientY-kbTouchOY)+'px;'+
+    'border:2px solid #3B82F6;border-radius:7px;background:#13161B;padding:9px;font-size:11px;';
+  document.body.appendChild(kbTouchClone);
+}
+
+// ── CLIENTES ──
+var clientesData=[
+  {init:'CA',bg:'#1D4ED8',nome:'Construtora Arco Ltda',info:'Sao Paulo/SP',val:'R$ 68.400'},
+  {init:'VN',bg:'#8B5CF6',nome:'Vila Nova Empr.',info:'Campinas/SP',val:'R$ 54.200'},
+  {init:'JP',bg:'#10B981',nome:'Joao Pedro Silva',info:'Santos/SP',val:'R$ 28.900'},
+  {init:'TB',bg:'#F59E0B',nome:'Tech Build Ltda',info:'Guarulhos/SP',val:'R$ 44.100'},
+  {init:'OB',bg:'#EF4444',nome:'Obra Bela Vista',info:'Sao Paulo/SP',val:'R$ 19.700'},
+];
+(function renderClientes(){
+  var el=document.getElementById('cli-list');
+  if(!el)return;
+  el.innerHTML=clientesData.map(function(c){
+    return '<div style="display:flex;align-items:center;gap:9px;padding:9px;border-radius:7px;border:1px solid rgba(255,255,255,.07);background:#1A1E26;margin-bottom:7px;cursor:pointer" onclick="selCli(\''+c.nome+'\')">'+
+      '<div style="width:32px;height:32px;border-radius:50%;background:'+c.bg+';display:flex;align-items:center;justify-content:center;font-weight:600;color:#fff;font-size:10px;flex-shrink:0">'+c.init+'</div>'+
+      '<div style="flex:1;min-width:0">'+
+        '<div style="font-size:12px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+c.nome+'</div>'+
+        '<div style="font-size:10px;color:#555D6E">'+c.info+'</div>'+
+      '</div>'+
+      '<div style="font-size:11px;font-weight:600;color:#10B981;flex-shrink:0">'+c.val+'</div>'+
+    '</div>';
+  }).join('');
+})();
+
+function selCli(nome){
+  var el=document.getElementById('cli-detail-name');
+  if(el) el.textContent=nome;
+  // também destaca o item clicado
+  qsa('#cli-list > div').forEach(function(d){d.style.borderColor='rgba(255,255,255,.07)';});
+  var found=Array.from(qsa('#cli-list > div')).find(function(d){return d.textContent.indexOf(nome)>=0;});
+  if(found) found.style.borderColor='#3B82F6';
+}
+
+// ── ORÇAMENTO BUILDER ──
+var items=[];
+var itemCount=0;
+var activeItem=null;
+var pvTab='dt';
+
+// Catálogo de produtos — editável pelo usuário
+var catalogo={
+  modelos:[
+    {id:'jc',nome:'Janela de correr',folhas:2},
+    {id:'ja',nome:'Janela de abrir',folhas:2},
+    {id:'pc',nome:'Porta de correr',folhas:2},
+    {id:'pp',nome:'Porta pivotante',folhas:1},
+    {id:'pf',nome:'Painel fixo',folhas:1},
+    {id:'pb',nome:'Porta balcao',folhas:3},
+    {id:'jb',nome:'Janela basculante',folhas:1},
+    {id:'mx',nome:'Maxim-ar',folhas:1},
+    {id:'fd',nome:'Fachada integrada',folhas:1}
+  ],
+  linhas:['Suprema','Gold','Integrada','Fachada','Porta Balcao','Premium']
+};
+// alias para compatibilidade
+var modelos=catalogo.modelos.map(function(m){return m.nome;});
+var linhas=catalogo.linhas.slice();
+var cores=[
+  {n:'Natural',h:'#C8C8C8'},{n:'Preto fosco',h:'#1a1a1a'},
+  {n:'Bronze',h:'#7B5B3A'},{n:'Branco',h:'#F0EEE8'},
+  {n:'Champagne',h:'#8B7355'},{n:'Grafite',h:'#3A3A3A'}
+];
+var vidros=['Incolor 6mm','Fume 6mm','Laminado 8mm','Reflexivo 6mm','Duplo 4+4mm','Temperado 8mm'];
+var vidroAlpha={'Incolor 6mm':.15,'Fume 6mm':.55,'Laminado 8mm':.22,'Reflexivo 6mm':.32,'Duplo 4+4mm':.18,'Temperado 8mm':.12};
+var vidroHue={'Incolor 6mm':'#9BBDD0','Fume 6mm':'#3A3A48','Laminado 8mm':'#A8C4A8','Reflexivo 6mm':'#B8D8E8','Duplo 4+4mm':'#C0D8EC','Temperado 8mm':'#A0C4D0'};
+var fol={'Janela de correr':2,'Janela de abrir':2,'Porta de correr':2,'Porta pivotante':1,'Painel fixo':1,'Porta balcao':3,'Janela basculante':1,'Maxim-ar':1,'Fachada integrada':1};
+
+function novoOrc(){
+  var lista=document.getElementById('orc-lista');
+  var editor=document.getElementById('orc-editor');
+  var proposta=document.getElementById('orc-proposta');
+  if(lista) lista.style.display='none';
+  if(editor) editor.style.display='block';
+  if(proposta) proposta.style.display='none';
+  go('orc',document.getElementById('ni-orc'));
+  items=[];itemCount=0;
+  var iw=document.getElementById('itens-wrap');
+  if(iw) iw.innerHTML='';
+  atualizaTotais();
+  addItem();
+}
+function fecharEditor(){
+  var lista=document.getElementById('orc-lista');
+  var editor=document.getElementById('orc-editor');
+  if(lista) lista.style.display='block';
+  if(editor) editor.style.display='none';
+}
+function abrirProposta(){
+  fecharEditor();
+  var lista=document.getElementById('orc-lista');
+  var proposta=document.getElementById('orc-proposta');
+  if(lista) lista.style.display='none';
+  if(proposta) proposta.style.display='block';
+  renderProposta();
+}
+function fecharProposta(){
+  var lista=document.getElementById('orc-lista');
+  var proposta=document.getElementById('orc-proposta');
+  if(lista) lista.style.display='block';
+  if(proposta) proposta.style.display='none';
+}
+
+function addItem(){
+  itemCount++;
+  var id=itemCount;
+  var div=document.createElement('div');
+  div.className='item-row';
+  div.id='item-'+id;
+  div.innerHTML=
+    '<button class="del" onclick="delItem('+id+')">x</button>'+
+    '<div class="item-num">'+id+'</div>'+
+    '<div class="frow c2">'+
+      '<div class="fl"><label>Modelo</label>'+
+        '<select onchange="updItem('+id+')" id="mod-'+id+'">'+
+          modelos.map(function(m){return '<option>'+m+'</option>';}).join('')+
+        '</select></div>'+
+      '<div class="fl"><label>Linha</label>'+
+        '<select onchange="updItem('+id+')" id="lin-'+id+'">'+
+          linhas.map(function(l){return '<option>'+l+'</option>';}).join('')+
+        '</select></div>'+
+    '</div>'+
+    '<div class="frow c4">'+
+      '<div class="fl"><label>Largura (cm)</label><input type="number" id="larg-'+id+'" value="200" min="30" max="500" oninput="updItem('+id+')"></div>'+
+      '<div class="fl"><label>Altura (cm)</label><input type="number" id="alt-'+id+'" value="120" min="30" max="300" oninput="updItem('+id+')"></div>'+
+      '<div class="fl"><label>Quantidade</label><input type="number" id="qtd-'+id+'" value="1" min="1" oninput="updItem('+id+')"></div>'+
+      '<div class="fl"><label>Ambiente</label><input type="text" id="amb-'+id+'" placeholder="Ex: Sala" oninput="updItem('+id+')"></div>'+
+    '</div>'+
+    '<div class="frow c2">'+
+      '<div class="fl"><label>Cor</label>'+
+        '<select onchange="updItem('+id+')" id="cor-'+id+'">'+
+          cores.map(function(c){return '<option value="'+c.h+'">'+c.n+'</option>';}).join('')+
+        '</select></div>'+
+      '<div class="fl"><label>Vidro</label>'+
+        '<select onchange="updItem('+id+')" id="vid-'+id+'">'+
+          vidros.map(function(v){return '<option>'+v+'</option>';}).join('')+
+        '</select></div>'+
+    '</div>'+
+    '<div class="frow c2">'+
+      '<div class="fl"><label>Observacao</label><input type="text" id="obs-'+id+'" placeholder="Ex: com grade, sem ferragem..." oninput="updItem('+id+')"></div>'+
+      '<div style="display:flex;align-items:flex-end;padding-bottom:1px">'+
+        '<div style="background:#222733;border-radius:7px;padding:7px 12px;width:100%">'+
+          '<div style="font-size:10px;color:#555D6E;margin-bottom:2px">Valor estimado</div>'+
+          '<div style="font-size:16px;font-weight:700;color:#10B981" id="preco-'+id+'">R$ 0</div>'+
+        '</div>'+
+      '</div>'+
+    '</div>';
+  var iw=document.getElementById('itens-wrap');
+  if(iw) iw.appendChild(div);
+  items.push({id:id});
+  selItem(id);
+  updItem(id);
+}
+
+function delItem(id){
+  var el=document.getElementById('item-'+id);
+  if(el) el.parentNode.removeChild(el);
+  items=items.filter(function(i){return i.id!==id;});
+  atualizaTotais();
+  if(activeItem===id){
+    var remaining=qsa('.item-row');
+    if(remaining.length>0){
+      var nid=parseInt(remaining[0].id.split('-')[1]);
+      selItem(nid);updItem(nid);
+    } else {limpaCanvas();}
+  }
+}
+function selItem(id){
+  activeItem=id;
+  qsa('.item-row').forEach(function(r){
+    r.style.borderColor=(parseInt(r.id.split('-')[1])===id)?'#3B82F6':'rgba(255,255,255,.07)';
+  });
+}
+function g(n,id){return document.getElementById(n+'-'+id);}
+
+function updItem(id){
+  selItem(id);
+  if(!g('mod',id))return;
+  var mod=g('mod',id).value;
+  var larg=parseFloat(g('larg',id).value)||100;
+  var alt=parseFloat(g('alt',id).value)||100;
+  var qtd=parseInt(g('qtd',id).value)||1;
+  var corHex=g('cor',id).value;
+  var vid=g('vid',id).value;
+  var area=(larg*alt)/10000;
+  var gprice={'Incolor 6mm':180,'Fume 6mm':220,'Laminado 8mm':280,'Reflexivo 6mm':260,'Duplo 4+4mm':320,'Temperado 8mm':300};
+  var alu=Math.round(area*290+larg*2.1+alt*2.1);
+  var vi=Math.round(area*(gprice[vid]||180));
+  var fe=Math.round(120+(fol[mod]||2)*45);
+  var mo=Math.round(area*160+80);
+  var unit=alu+vi+fe+mo;
+  var total=unit*qtd;
+  var pe=g('preco',id);
+  if(pe) pe.textContent='R$ '+total.toLocaleString('pt-BR');
+  atualizaTotais();
+  drawPV(mod,larg,alt,corHex,vid);
+  updPvInfo(mod,larg,alt,corHex,vid,unit,qtd,total,id);
+}
+
+function atualizaTotais(){
+  var mat=0,mo2=0;
+  qsa('.item-row').forEach(function(r){
+    var id=parseInt(r.id.split('-')[1]);
+    if(!g('mod',id))return;
+    var larg=parseFloat(g('larg',id).value)||100;
+    var alt=parseFloat(g('alt',id).value)||100;
+    var qtd=parseInt(g('qtd',id).value)||1;
+    var vid=g('vid',id).value;
+    var mod=g('mod',id).value;
+    var area=(larg*alt)/10000;
+    var gprice={'Incolor 6mm':180,'Fume 6mm':220,'Laminado 8mm':280,'Reflexivo 6mm':260,'Duplo 4+4mm':320,'Temperado 8mm':300};
+    var alu=Math.round(area*290+larg*2.1+alt*2.1);
+    var vi=Math.round(area*(gprice[vid]||180));
+    var fe=Math.round(120+(fol[mod]||2)*45);
+    var mob=Math.round(area*160+80);
+    mat+=(alu+vi+fe)*qtd;
+    mo2+=mob*qtd;
+  });
+  var tm=document.getElementById('tot-mat');
+  var tmo=document.getElementById('tot-mo');
+  var tg=document.getElementById('tot-geral');
+  if(tm) tm.textContent=fmt2(mat);
+  if(tmo) tmo.textContent=fmt2(mo2);
+  if(tg) tg.textContent=fmt2(mat+mo2);
+}
+
+function setPvTab(tab,btn){
+  pvTab=tab;
+  qsa('.pvt').forEach(function(b){b.classList.remove('on');});
+  btn.classList.add('on');
+  var dt=document.getElementById('pv-dt');
+  var il=document.getElementById('pv-il');
+  if(dt) dt.style.display=tab==='dt'?'flex':'none';
+  if(il) il.style.display=tab==='il'?'flex':'none';
+  if(activeItem) updItem(activeItem);
+}
+
+function limpaCanvas(){
+  ['cv-dt','cv-il'].forEach(function(cid){
+    var cv=document.getElementById(cid);
+    if(!cv)return;
+    var x=cv.getContext('2d');
+    cv.width=340;cv.height=220;x.clearRect(0,0,340,220);
+  });
+}
+
+function dk2(h,f){
+  var r=parseInt(h.slice(1,3),16),gr=parseInt(h.slice(3,5),16),b=parseInt(h.slice(5,7),16);
+  return 'rgb('+Math.round(r*f)+','+Math.round(gr*f)+','+Math.round(b*f)+')';
+}
+function lk2(h,f){
+  var r=parseInt(h.slice(1,3),16),gr=parseInt(h.slice(3,5),16),b=parseInt(h.slice(5,7),16);
+  return 'rgb('+Math.min(255,Math.round(r+(255-r)*f))+','+Math.min(255,Math.round(gr+(255-gr)*f))+','+Math.min(255,Math.round(b+(255-b)*f))+')';
+}
+
+function drawPV(modelo,larg,alt,corHex,vid){
+  drawDT(modelo,larg,alt,corHex,vid);
+  drawIL(modelo,larg,alt,corHex,vid);
+}
+
+function drawDT(modelo,larg,alt,corHex,vid){
+  var cv=document.getElementById('cv-dt');
+  if(!cv)return;
+  var cw=cv.parentElement?Math.min(cv.parentElement.clientWidth-32,380):340;
+  var ch=Math.round(cw*0.65);
+  cv.width=cw;cv.height=ch;
+  var x=cv.getContext('2d');
+  x.clearRect(0,0,cw,ch);
+  var lc='#9aa0b0',dc='#666e80',gc='rgba(100,160,220,.11)';
+  var ratio=larg/alt;
+  var mW=Math.round(cw*0.52),mH=Math.round(ch*0.62);
+  var pw=mW,ph=mW/ratio;
+  if(ph>mH){ph=mH;pw=mH*ratio;}
+  pw=Math.floor(pw);ph=Math.floor(ph);
+  var ox=Math.floor((cw-pw)/2)+20,oy=Math.floor((ch-ph)/2)+10;
+  var bw=Math.max(7,Math.floor(pw*0.05));
+  x.strokeStyle=lc;x.lineWidth=1.5;x.strokeRect(ox,oy,pw,ph);
+  x.fillStyle=gc;x.fillRect(ox+bw,oy+bw,pw-bw*2,ph-bw*2);
+  x.strokeStyle=lc;x.lineWidth=.8;x.strokeRect(ox+bw,oy+bw,pw-bw*2,ph-bw*2);
+  var nf=fol[modelo]||2;
+  var iW=pw-bw*2,iH=ph-bw*2,iX=ox+bw,iY=oy+bw;
+  if(modelo==='Painel fixo'){
+    // sem divisorias
+  } else if(modelo==='Porta pivotante'){
+    x.beginPath();x.moveTo(ox+pw/2,oy+bw);x.lineTo(ox+pw/2,oy+ph-bw);x.strokeStyle=lc;x.lineWidth=1;x.stroke();
+    x.strokeStyle=dc;x.lineWidth=.6;x.setLineDash([4,4]);
+    x.beginPath();x.arc(ox+bw,oy+ph-bw,iW*.65,-(Math.PI/2),-Math.PI*.15);x.stroke();x.setLineDash([]);
+    x.fillStyle=lc;x.beginPath();x.arc(ox+pw*.72,oy+ph/2,3,0,Math.PI*2);x.fill();
+  } else if(modelo==='Janela basculante'||modelo==='Maxim-ar'){
+    x.strokeStyle=dc;x.lineWidth=.6;x.setLineDash([3,3]);
+    x.beginPath();x.moveTo(iX,iY);x.lineTo(iX+iW/2,iY+iH*.35);x.stroke();
+    x.beginPath();x.moveTo(iX+iW,iY);x.lineTo(iX+iW/2,iY+iH*.35);x.stroke();
+    x.setLineDash([]);
+    x.beginPath();x.moveTo(iX,iY+iH*.35);x.lineTo(iX+iW,iY+iH*.35);x.strokeStyle=lc;x.lineWidth=1;x.stroke();
+  } else if(modelo==='Porta balcao'){
+    x.fillStyle=dc;x.fillRect(iX,iY,iW,4);x.fillRect(iX,iY+iH-4,iW,4);
+    var fw3=iW/3;
+    for(var i=1;i<3;i++){var lx2=iX+i*fw3;x.beginPath();x.moveTo(lx2,iY+4);x.lineTo(lx2,iY+iH-4);x.strokeStyle=lc;x.lineWidth=.8;x.stroke();}
+    for(var i=0;i<3;i++){x.fillStyle=lc;x.beginPath();x.arc(iX+i*fw3+fw3/2,iY+iH/2,3,0,Math.PI*2);x.fill();}
+  } else if(modelo==='Janela de abrir'){
+    var fw2=iW/nf;
+    for(var i=1;i<nf;i++){var lxa=iX+i*fw2;x.beginPath();x.moveTo(lxa,iY);x.lineTo(lxa,iY+iH);x.strokeStyle=lc;x.lineWidth=.8;x.stroke();}
+    for(var i=0;i<nf;i++){
+      var fxa=iX+i*fw2;
+      x.strokeStyle=dc;x.lineWidth=.5;x.setLineDash([4,3]);
+      if(i%2===0){x.beginPath();x.arc(fxa+fw2,iY+iH/2,fw2*.7,-Math.PI*.5,Math.PI*.1);x.stroke();}
+      else{x.beginPath();x.arc(fxa,iY+iH/2,fw2*.7,-Math.PI*.9,Math.PI*.5);x.stroke();}
+      x.setLineDash([]);
+      x.fillStyle=lc;x.beginPath();x.arc(fxa+fw2/2,iY+iH/2,3,0,Math.PI*2);x.fill();
+    }
+  } else {
+    // correr (padrao)
+    var fw2=iW/nf;
+    for(var i=1;i<nf;i++){var lxc=iX+i*fw2;x.beginPath();x.moveTo(lxc,iY);x.lineTo(lxc,iY+iH);x.strokeStyle=lc;x.lineWidth=.8;x.stroke();}
+    for(var i=0;i<nf;i++){
+      var fxc=iX+i*fw2;
+      x.strokeStyle=dc;x.lineWidth=.5;x.setLineDash([3,3]);
+      if(i%2===0){x.beginPath();x.moveTo(fxc+2,iY+5);x.lineTo(fxc+fw2-2,iY+5);x.stroke();}
+      else{x.beginPath();x.moveTo(fxc+2,iY+iH-5);x.lineTo(fxc+fw2-2,iY+iH-5);x.stroke();}
+      x.setLineDash([]);
+      x.fillStyle=lc;x.beginPath();x.arc(fxc+fw2/2,iY+iH*.5,3,0,Math.PI*2);x.fill();
+    }
+  }
+  // cotas
+  x.strokeStyle=dc;x.lineWidth=.5;x.setLineDash([4,3]);
+  x.beginPath();x.moveTo(ox,oy-14);x.lineTo(ox+pw,oy-14);x.stroke();x.setLineDash([]);
+  x.beginPath();x.moveTo(ox,oy-16);x.lineTo(ox,oy-12);x.stroke();
+  x.beginPath();x.moveTo(ox+pw,oy-16);x.lineTo(ox+pw,oy-12);x.stroke();
+  x.fillStyle=dc;x.font='10px DM Sans,sans-serif';x.textAlign='center';
+  x.fillText(larg+' cm',ox+pw/2,oy-18);
+  x.strokeStyle=dc;x.lineWidth=.5;x.setLineDash([4,3]);
+  x.beginPath();x.moveTo(ox+pw+14,oy);x.lineTo(ox+pw+14,oy+ph);x.stroke();x.setLineDash([]);
+  x.beginPath();x.moveTo(ox+pw+12,oy);x.lineTo(ox+pw+16,oy);x.stroke();
+  x.beginPath();x.moveTo(ox+pw+12,oy+ph);x.lineTo(ox+pw+16,oy+ph);x.stroke();
+  x.save();x.translate(ox+pw+22,oy+ph/2);x.rotate(-Math.PI/2);x.fillText(alt+' cm',0,4);x.restore();
+  x.fillStyle='#7a80a0';x.font='bold 10px DM Sans,sans-serif';x.textAlign='center';
+  x.fillText(modelo,ox+pw/2,oy+ph+16);
+  var corNome=cores.find(function(c){return c.h===corHex;});
+  x.fillStyle=dc;x.font='9px DM Sans,sans-serif';
+  x.fillText((corNome?corNome.n:'-')+' - '+vid,ox+pw/2,oy+ph+28);
+}
+
+function drawIL(modelo,larg,alt,corHex,vid){
+  var cv=document.getElementById('cv-il');
+  if(!cv)return;
+  var cw=cv.parentElement?Math.min(cv.parentElement.clientWidth-32,380):340;
+  var ch=Math.round(cw*0.65);
+  cv.width=cw;cv.height=ch;
+  var x=cv.getContext('2d');
+  x.clearRect(0,0,cw,ch);
+  var col=corHex,cdk=dk2(col,.6),cmd=dk2(col,.78),clk=lk2(col,.25);
+  var ratio=larg/alt,mW=Math.round(cw*0.5),mH=Math.round(ch*0.6);
+  var pw=mW,ph=mW/ratio;
+  if(ph>mH){ph=mH;pw=mH*ratio;}
+  pw=Math.floor(pw);ph=Math.floor(ph);
+  var dep=18,pox=Math.floor((cw-pw)/2)+18,poy=Math.floor((ch-ph)/2)+10;
+  var bx=pox-dep*.7,by=poy-dep*.4;
+  x.beginPath();x.moveTo(bx,by);x.lineTo(bx+pw,by);x.lineTo(pox+pw,poy);x.lineTo(pox,poy);x.closePath();
+  x.fillStyle=cmd;x.fill();x.strokeStyle=cdk;x.lineWidth=.6;x.stroke();
+  x.beginPath();x.moveTo(bx+pw,by);x.lineTo(bx+pw,by+ph);x.lineTo(pox+pw,poy+ph);x.lineTo(pox+pw,poy);x.closePath();
+  x.fillStyle=cdk;x.fill();x.stroke();
+  x.fillStyle=col;x.strokeStyle=cdk;x.lineWidth=1;x.fillRect(pox,poy,pw,ph);x.strokeRect(pox,poy,pw,ph);
+  var bw=Math.max(7,Math.floor(pw*.055));
+  x.fillStyle=cmd;
+  [[pox,poy,bw,ph],[pox+pw-bw,poy,bw,ph],[pox,poy,pw,bw],[pox,poy+ph-bw,pw,bw]].forEach(function(r){x.fillRect(r[0],r[1],r[2],r[3]);});
+  var nf=fol[modelo]||2;
+  var iW=pw-bw*2,iH=ph-bw*2,iX=pox+bw,iY=poy+bw;
+  var gh=vidroHue[vid]||'#9BB8D0',ga=vidroAlpha[vid]||.15;
+  if(modelo==='Painel fixo'){
+    x.fillStyle=gh;x.globalAlpha=ga;x.fillRect(iX+2,iY+2,iW-4,iH-4);x.globalAlpha=1;
+    x.strokeStyle=cdk;x.lineWidth=.5;x.strokeRect(iX+2,iY+2,iW-4,iH-4);
+  } else {
+    var fw2=iW/nf;
+    for(var i=0;i<nf;i++){
+      var fx=iX+i*fw2;
+      x.fillStyle=col;x.fillRect(fx,iY,3,iH);
+      x.fillStyle=gh;x.globalAlpha=ga;x.fillRect(fx+3,iY+2,fw2-5,iH-4);x.globalAlpha=1;
+      x.strokeStyle=cdk;x.lineWidth=.5;x.strokeRect(fx+3,iY+2,fw2-5,iH-4);
+      if(vid==='Reflexivo 6mm'){x.globalAlpha=.08;x.fillStyle='#fff';x.fillRect(fx+6,iY+4,6,iH-8);x.globalAlpha=1;}
+      x.fillStyle=cmd;x.fillRect(fx+fw2-6,iY+iH*.3,4,iH*.4);
+    }
+  }
+  x.fillStyle=clk;x.fillRect(pox+1,poy+1,5,5);x.fillRect(pox+pw-6,poy+1,5,5);
+}
+
+function updPvInfo(modelo,larg,alt,corHex,vid,unit,qtd,total,id){
+  var ambEl=document.getElementById('amb-'+id);
+  var amb=ambEl?ambEl.value:'';
+  var cn=cores.find(function(c){return c.h===corHex;});
+  var tags=[modelo,larg+'x'+alt+' cm',cn?cn.n:'',vid,(fol[modelo]||2)+' folhas',amb].filter(Boolean);
+  var tagsEl=document.getElementById('pv-tags');
+  var priceEl=document.getElementById('pv-price');
+  var subEl=document.getElementById('pv-sub');
+  if(tagsEl) tagsEl.innerHTML=tags.map(function(t){return '<span class="pv-tag">'+t+'</span>';}).join('');
+  if(priceEl) priceEl.textContent='R$ '+total.toLocaleString('pt-BR');
+  if(subEl) subEl.textContent='Qtd: '+qtd+' un - Unit: R$ '+unit.toLocaleString('pt-BR');
+}
+
+// ── PROPOSTA ──
+// qrSvgStr removido - aprovacao simplificada
+var orcNum='';
+
+function gerarCanvasProposta(tipo,mod,larg,alt,corHex,vid,w,h2){
+  var cv=document.createElement('canvas');
+  cv.width=w;cv.height=h2;
+  var x=cv.getContext('2d');
+  x.fillStyle='#F9FAFB';x.fillRect(0,0,w,h2);
+  var nf=fol[mod]||2;
+  var ratio=larg/alt,mW=Math.floor(w*.62),mH=Math.floor(h2*.62);
+  var pw=mW,ph=mW/ratio;if(ph>mH){ph=mH;pw=mH*ratio;}
+  pw=Math.floor(pw);ph=Math.floor(ph);
+  if(tipo==='dt'){
+    var lc='#6B7280',dc='#9CA3AF',gc='rgba(59,130,246,.10)';
+    var ox=Math.floor((w-pw)/2)+10,oy=Math.floor((h2-ph)/2)+14;
+    var bw=Math.max(6,Math.floor(pw*.055));
+    x.strokeStyle=lc;x.lineWidth=1.5;x.strokeRect(ox,oy,pw,ph);
+    x.fillStyle=gc;x.fillRect(ox+bw,oy+bw,pw-bw*2,ph-bw*2);
+    x.strokeStyle=lc;x.lineWidth=.8;x.strokeRect(ox+bw,oy+bw,pw-bw*2,ph-bw*2);
+    var iW=pw-bw*2,iH=ph-bw*2,iX=ox+bw,iY=oy+bw;
+    if(mod!=='Painel fixo'){
+      var fw2=iW/nf;
+      for(var i=1;i<nf;i++){var lxp=iX+i*fw2;x.beginPath();x.moveTo(lxp,iY);x.lineTo(lxp,iY+iH);x.strokeStyle=lc;x.lineWidth=.8;x.stroke();}
+      for(var i=0;i<nf;i++){
+        var fxp=iX+i*fw2;
+        x.strokeStyle=dc;x.lineWidth=.5;x.setLineDash([3,3]);
+        if(i%2===0){x.beginPath();x.moveTo(fxp+2,iY+5);x.lineTo(fxp+fw2-2,iY+5);x.stroke();}
+        else{x.beginPath();x.moveTo(fxp+2,iY+iH-5);x.lineTo(fxp+fw2-2,iY+iH-5);x.stroke();}
+        x.setLineDash([]);
+        x.fillStyle=lc;x.beginPath();x.arc(fxp+fw2/2,iY+iH*.5,3,0,Math.PI*2);x.fill();
+      }
+    }
+    x.fillStyle=dc;x.font='9px DM Sans,sans-serif';x.textAlign='center';
+    x.fillText(larg+' cm',ox+pw/2,oy-6);
+    x.fillText(mod,ox+pw/2,oy+ph+14);
+  } else {
+    var col=corHex,cdk=dk2(col,.6),cmd=dk2(col,.78),clk=lk2(col,.3);
+    var dep=14,pox=Math.floor((w-pw)/2)+12,poy=Math.floor((h2-ph)/2)+10;
+    var bxp=pox-dep*.7,byp=poy-dep*.4;
+    x.beginPath();x.moveTo(bxp,byp);x.lineTo(bxp+pw,byp);x.lineTo(pox+pw,poy);x.lineTo(pox,poy);x.closePath();
+    x.fillStyle=cmd;x.fill();x.strokeStyle=cdk;x.lineWidth=.5;x.stroke();
+    x.beginPath();x.moveTo(bxp+pw,byp);x.lineTo(bxp+pw,byp+ph);x.lineTo(pox+pw,poy+ph);x.lineTo(pox+pw,poy);x.closePath();
+    x.fillStyle=cdk;x.fill();x.stroke();
+    x.fillStyle=col;x.strokeStyle=cdk;x.lineWidth=1;x.fillRect(pox,poy,pw,ph);x.strokeRect(pox,poy,pw,ph);
+    var bw=Math.max(5,Math.floor(pw*.055));
+    x.fillStyle=cmd;
+    [[pox,poy,bw,ph],[pox+pw-bw,poy,bw,ph],[pox,poy,pw,bw],[pox,poy+ph-bw,pw,bw]].forEach(function(r){x.fillRect(r[0],r[1],r[2],r[3]);});
+    var iW=pw-bw*2,iH=ph-bw*2,iX=pox+bw,iY=poy+bw;
+    var gh=vidroHue[vid]||'#9BB8D0',ga=vidroAlpha[vid]||.15;
+    if(mod==='Painel fixo'){
+      x.fillStyle=gh;x.globalAlpha=ga;x.fillRect(iX+2,iY+2,iW-4,iH-4);x.globalAlpha=1;
+    } else {
+      var fw2=iW/nf;
+      for(var i=0;i<nf;i++){
+        var fx=iX+i*fw2;
+        x.fillStyle=col;x.fillRect(fx,iY,3,iH);
+        x.fillStyle=gh;x.globalAlpha=ga;x.fillRect(fx+3,iY+2,fw2-5,iH-4);x.globalAlpha=1;
+        x.strokeStyle=cdk;x.lineWidth=.5;x.strokeRect(fx+3,iY+2,fw2-5,iH-4);
+        x.fillStyle=cmd;x.fillRect(fx+fw2-5,iY+iH*.3,3,iH*.4);
+      }
+    }
+  }
+  return cv.toDataURL('image/png',.92);
+}
+
+function renderProposta(){
+  var cliEl=document.getElementById('e-cli');
+  var obraEl=document.getElementById('e-obra');
+  var obsEl=document.getElementById('e-obs');
+  var cli=cliEl?cliEl.value:'Cliente';
+  var obra=obraEl?obraEl.value:'Obra';
+  var obs=obsEl?obsEl.value:'';
+  var totGeral=document.getElementById('tot-geral')?document.getElementById('tot-geral').textContent:'R$ 0';
+  var totMat=document.getElementById('tot-mat')?document.getElementById('tot-mat').textContent:'R$ 0';
+  var totMo=document.getElementById('tot-mo')?document.getElementById('tot-mo').textContent:'R$ 0';
+  var valEl=document.querySelector('#orc-editor input[type=date]');
+  var prazoEl=document.querySelector('#orc-editor input[placeholder="Ex: 30 dias"]');
+  var pgtoEl=document.querySelectorAll('#orc-editor select')[2];
+  var prazo=(prazoEl&&prazoEl.value)?prazoEl.value:'30 dias uteis';
+  var pgto=pgtoEl?pgtoEl.value:'50% + 50% na entrega';
+  var valStr=valEl&&valEl.value?new Date(valEl.value+'T12:00:00').toLocaleDateString('pt-BR'):new Date().toLocaleDateString('pt-BR');
+  if(!orcNum) orcNum='#ORC-'+String(200+Math.floor(Math.random()*800));
+  var dataHoje=new Date().toLocaleDateString('pt-BR');
+  var itensHtml='';var numItem=0;
+  qsa('.item-row').forEach(function(r){
+    var id=parseInt(r.id.split('-')[1]);
+    if(!g('mod',id))return;
+    numItem++;
+    var mod=g('mod',id).value,lin=g('lin',id).value;
+    var larg=parseFloat(g('larg',id).value)||100,alt=parseFloat(g('alt',id).value)||100;
+    var qtd=g('qtd',id).value,corH=g('cor',id).value,vid2=g('vid',id).value;
+    var amb=g('amb',id).value||'',obs2=g('obs',id).value||'';
+    var preco=g('preco',id).textContent;
+    var cn=cores.find(function(c){return c.h===corH;});
+    var corNome=cn?cn.n:'';
+    var nf2=fol[mod]||2;
+    var specs=['Linha '+lin,larg+'x'+alt+' cm',corNome,vid2,nf2+' folha'+(nf2>1?'s':''),amb?'Amb: '+amb:''].filter(Boolean);
+    var imgDT=gerarCanvasProposta('dt',mod,larg,alt,corH,vid2,280,180);
+    var imgIL=gerarCanvasProposta('il',mod,larg,alt,corH,vid2,280,180);
+    itensHtml+=
+      '<div class="prop-item">'+
+      '<div class="prop-item-header">'+
+        '<div style="display:flex;align-items:center"><div class="prop-item-num">'+numItem+'</div>'+
+        '<div class="prop-item-title2" style="margin-left:8px">'+mod+'</div></div>'+
+        '<div style="text-align:right"><div class="prop-item-price2">'+preco+'</div>'+
+        '<div style="font-size:10px;color:#9CA3AF">Qtd: '+qtd+'</div></div>'+
+      '</div>'+
+      '<div class="prop-item-body2">'+
+        '<div class="prop-item-imgs">'+
+          '<div><div class="prop-item-img2"><img src="'+imgDT+'" style="width:100%;height:auto;border-radius:5px"></div>'+
+          '<div class="prop-item-label">Desenho tecnico</div></div>'+
+          '<div><div class="prop-item-img2"><img src="'+imgIL+'" style="width:100%;height:auto;border-radius:5px"></div>'+
+          '<div class="prop-item-label">Ilustracao</div></div>'+
+        '</div>'+
+        '<div class="prop-item-specs2">'+specs.map(function(s){return '<span class="prop-item-spec2">'+s+'</span>';}).join('')+'</div>'+
+        (obs2?'<div class="prop-item-obs2">Obs: '+obs2+'</div>':'')+
+      '</div></div>';
+  });
+  document.getElementById('proposta-html').innerHTML=
+    '<div class="prop-header">'+
+      '<div class="prop-logo-wrap">'+
+        '<div class="prop-logo-icon">T</div>'+
+        '<div><div class="prop-logo">TEST<span>EMT</span></div>'+
+        '<div class="prop-logo-sub">Esquadrias de Aluminio</div></div>'+
+      '</div>'+
+      '<div style="text-align:right">'+
+        '<div style="font-size:10px;color:rgba(255,255,255,.45);margin-bottom:3px">PROPOSTA COMERCIAL</div>'+
+        '<div style="font-size:18px;font-weight:700;letter-spacing:-.3px">'+orcNum+'</div>'+
+        '<div style="font-size:10px;color:rgba(255,255,255,.4);margin-top:2px">Emitida em '+dataHoje+'</div>'+
+      '</div>'+
+    '</div>'+
+    '<div class="prop-body">'+
+      '<div class="prop-section"><div class="prop-section-title">Dados do cliente e da obra</div>'+
+        '<div class="prop-grid" style="grid-template-columns:1fr 1fr 1fr">'+
+          '<div class="prop-kv"><span class="prop-k">Cliente</span><span class="prop-v">'+cli+'</span></div>'+
+          '<div class="prop-kv"><span class="prop-k">Obra</span><span class="prop-v">'+(obra||'--')+'</span></div>'+
+          '<div class="prop-kv"><span class="prop-k">Data</span><span class="prop-v">'+dataHoje+'</span></div>'+
+          '<div class="prop-kv"><span class="prop-k">Validade</span><span class="prop-v">'+valStr+'</span></div>'+
+          '<div class="prop-kv"><span class="prop-k">Prazo</span><span class="prop-v">'+prazo+'</span></div>'+
+          '<div class="prop-kv"><span class="prop-k">Pagamento</span><span class="prop-v">'+pgto+'</span></div>'+
+        '</div>'+
+      '</div>'+
+      '<div class="prop-section"><div class="prop-section-title">Itens - '+numItem+' produto'+(numItem!==1?'s':'')+'</div>'+
+        (itensHtml||'<p style="color:#888;font-size:12px;padding:10px 0">Nenhum item adicionado.</p>')+
+      '</div>'+
+      '<div class="prop-section"><div class="prop-subtotal">'+
+        '<div class="prop-subtotal-row"><span>Materiais + ferragens</span><span>'+totMat+'</span></div>'+
+        '<div class="prop-subtotal-row"><span>Mao de obra</span><span>'+totMo+'</span></div>'+
+        '<div class="prop-subtotal-row total"><span>TOTAL</span><span>'+totGeral+'</span></div>'+
+      '</div></div>'+
+      (obs?'<div class="prop-section"><div class="prop-section-title">Observacoes</div><p style="font-size:12px;color:#555;line-height:1.7;background:#F9FAFB;padding:12px;border-radius:7px">'+obs+'</p></div>':'')+
+      '<div style="border:1px solid #E5E7EB;border-radius:10px;padding:20px 24px;margin-top:8px">'+
+        '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#9CA3AF;margin-bottom:16px">Aprovação da proposta</div>'+
+        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">'+
+          '<div>'+
+            '<div style="font-size:11px;color:#6B7280;margin-bottom:8px">Assinatura do cliente</div>'+
+            '<div style="border-bottom:1px solid #D1D5DB;height:48px"></div>'+
+            '<div style="font-size:9px;color:#9CA3AF;margin-top:5px">Nome legível / carimbo</div>'+
+          '</div>'+
+          '<div>'+
+            '<div style="font-size:11px;color:#6B7280;margin-bottom:8px">Data de aprovação</div>'+
+            '<div style="border-bottom:1px solid #D1D5DB;height:48px"></div>'+
+            '<div style="font-size:9px;color:#9CA3AF;margin-top:5px">____/____/________</div>'+
+          '</div>'+
+        '</div>'+
+        '<div style="margin-top:14px;font-size:10px;color:#9CA3AF;line-height:1.5">'+
+          'Ao assinar, o cliente confirma estar de acordo com todos os itens, valores, prazos e condições descritos nesta proposta.'+
+        '</div>'+
+      '</div>'+
+    '</div>'+
+    '<div class="prop-total">'+
+      '<div>'+
+        '<div style="font-size:10px;color:rgba(255,255,255,.45);margin-bottom:3px">VALOR TOTAL</div>'+
+        '<div style="font-size:26px;font-weight:700;letter-spacing:-.5px">'+totGeral+'</div>'+
+        '<div style="font-size:10px;color:rgba(255,255,255,.4);margin-top:4px">'+prazo+' - '+pgto+'</div>'+
+      '</div>'+
+      '<div style="text-align:right">'+
+        '<div style="font-size:12px;color:rgba(255,255,255,.7)">(11) 9 0000-0000</div>'+
+        '<div style="font-size:11px;color:rgba(255,255,255,.5)">contato@testemt.com.br</div>'+
+      '</div>'+
+    '</div>'+
+    '<div class="prop-footer">'+
+      '<span>'+orcNum+' - '+cli+' - '+dataHoje+'</span>'+
+      '<span>TESTEMT - Esquadrias de Aluminio</span>'+
+      '<span>Valida ate '+valStr+'</span>'+
+    '</div>';
+  var es=document.getElementById('envio-status');
+  if(es) es.style.display='none';
+}
+
+// ── AÇÕES DE ENVIO ──
+function imprimirProposta(){showToast('Preparando PDF...','info');setTimeout(function(){window.print();},300);}
+function enviarWhatsApp(){
+  var cli=document.getElementById('e-cli')?document.getElementById('e-cli').value:'cliente';
+  var total=document.getElementById('tot-geral')?document.getElementById('tot-geral').textContent:'';
+  var obra=document.getElementById('e-obra')?document.getElementById('e-obra').value:'obra';
+  var msg=encodeURIComponent('Ola! Segue a proposta comercial TESTEMT para '+obra+'.\nValor total: '+total+'\nProposta: '+orcNum+'\nQualquer duvida estou a disposicao!');
+  window.open('https://wa.me/?text='+msg,'_blank');
+  showToast('WhatsApp aberto! Cole o link da proposta para o cliente.','green');
+}
+function openEnvioEmail(){openMdl('email');}
+function enviarEmail(){
+  var dest=document.getElementById('email-dest')?document.getElementById('email-dest').value:'';
+  var assunto=document.getElementById('email-assunto')?document.getElementById('email-assunto').value:'Proposta TESTEMT';
+  var msg=document.getElementById('email-msg')?document.getElementById('email-msg').value:'';
+  if(!dest){alert('Informe o e-mail do destinatario.');return;}
+  window.open('mailto:'+dest+'?subject='+encodeURIComponent(assunto)+'&body='+encodeURIComponent(msg),'_blank');
+  closeMdl();
+  showToast('E-mail preparado para '+dest,'green');
+}
+function copiarLink(){
+  var link='https://testemt.vercel.app/proposta/'+orcNum;
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(link).then(function(){showToast('Link copiado: '+link,'green');}).catch(function(){copiarFallback(link);});
+  } else {copiarFallback(link);}
+}
+function copiarFallback(txt){
+  var el=document.createElement('textarea');
+  el.value=txt;el.style.cssText='position:fixed;opacity:0;';
+  document.body.appendChild(el);el.select();
+  try{document.execCommand('copy');showToast('Link copiado!','green');}
+  catch(e){showToast('Copie: '+txt,'info');}
+  document.body.removeChild(el);
+}
+function showStatus(msg,type){showToast(msg,type||'info');}
+function nfeMsgFutura(){showToast('Modulo de NF-e sera implementado na proxima fase.','amber');}
+function novaOP(){openMdl('op');}
+function enviarLinkPortal(){showToast('Link de rastreio enviado via WhatsApp!','green');}
+
+// ── IA ──
+var iaBASE={
+  orcamentos:[
+    {cod:'#ORC-244',cli:'Construtora Arco',obra:'Apto 42 Bl.B',val:14800,status:'Aguardando aprovacao',data:'03/06'},
+    {cod:'#ORC-243',cli:'Vila Nova Empr.',obra:'Bloco B Fase 2',val:22400,status:'Aprovado',data:'02/06'},
+    {cod:'#ORC-242',cli:'Joao P. Silva',obra:'Residencia',val:38900,status:'Aguardando aprovacao',data:'01/06'},
+    {cod:'#ORC-241',cli:'Construtora Arco',obra:'Apto 38',val:11200,status:'Em producao',data:'30/05'},
+    {cod:'#ORC-240',cli:'Tech Build Ltda',obra:'Painel Fachada',val:54000,status:'Aprovado',data:'28/05'}
+  ],
+  clientes:[
+    {nome:'Construtora Arco Ltda',cidade:'Sao Paulo/SP',total:68400,pedidos:7},
+    {nome:'Vila Nova Empreendimentos',cidade:'Campinas/SP',total:54200,pedidos:5},
+    {nome:'Joao Pedro Silva',cidade:'Santos/SP',total:28900,pedidos:3},
+    {nome:'Tech Build Ltda',cidade:'Guarulhos/SP',total:44100,pedidos:4},
+    {nome:'Obra Bela Vista',cidade:'Sao Paulo/SP',total:19700,pedidos:2}
+  ],
+  producao:[
+    {op:'OP-044',nome:'Fachada Integrada',cli:'Joao P. Silva',etapa:'Projeto',dias:2,atraso:false},
+    {op:'OP-043',nome:'Janela 4F Gold',cli:'Vila Nova',etapa:'Corte',dias:1,atraso:false},
+    {op:'OP-041',nome:'Porta Balcao Gold',cli:'Tech Build',etapa:'Usinagem',dias:3,atraso:false},
+    {op:'OP-038',nome:'Porta balcao',cli:'Vila Nova',etapa:'Vidracaria',dias:7,atraso:true},
+    {op:'OP-037',nome:'Janela 4F Gold',cli:'J.P.Silva',etapa:'Pintura',dias:9,atraso:true},
+    {op:'OP-035',nome:'Janela 2F Suprema',cli:'Arco',etapa:'Expedicao',dias:12,atraso:true}
+  ],
+  estoque:[
+    {mat:'Perfil Suprema - Trilho inferior',atual:12,min:50,status:'Critico'},
+    {mat:'Borracha vedacao 8mm',atual:28,min:40,status:'Baixo'},
+    {mat:'Vidro incolor 6mm',atual:340,min:100,status:'OK'},
+    {mat:'Perfil Gold folha',atual:74,min:40,status:'OK'},
+    {mat:'Ferragem correr 1,5m',atual:112,min:30,status:'OK'}
+  ],
+  financeiro:{
+    faturamentoMes:347820,faturamentoAnual:2100000,
+    aReceber:124800,aPagar:48200,saldo:76600,
+    inadimplencia:12400,lucroMes:89430,margemMes:25.7,
+    contasVencidas:[{cli:'Joao P. Silva',val:12400,venc:'01/06'}],
+    contasAVencer:[{cli:'Construtora Arco',val:14800,venc:'10/06'},{cli:'Vila Nova Empr.',val:22400,venc:'08/06'}]
+  },
+  kpis:{taxaConversao:64,orcamentosAbertos:8,aguardandoAprovacao:3,emProducao:12,emAtraso:3,entreguesMes:24}
+};
+
+function addIAMsg(msg,role){
+  var wrap=document.getElementById('ia-msgs');
+  if(!wrap)return;
+  var isUser=role==='user';
+  var div=document.createElement('div');
+  div.style.cssText='display:flex;flex-direction:column;align-items:'+(isUser?'flex-end':'flex-start')+';gap:3px;';
+  div.innerHTML=
+    '<div style="font-size:9px;color:#555D6E;margin:0 4px">'+(isUser?'Voce':'&#10022; Assistente IA')+'</div>'+
+    '<div style="background:'+(isUser?'#3B82F6':'#1A1E26')+';color:'+(isUser?'#fff':'#F0F2F5')+';'+
+    'padding:10px 13px;border-radius:'+(isUser?'12px 12px 3px 12px':'12px 12px 12px 3px')+';'+
+    'font-size:12px;line-height:1.65;max-width:90%;white-space:pre-wrap">'+msg+'</div>';
+  wrap.appendChild(div);
+  wrap.scrollTop=wrap.scrollHeight;
+}
+
+function perguntaIA(txt){
+  var inp=document.getElementById('ia-input');
+  if(inp) inp.value=txt;
+  sendIA();
+}
+function sendIA(){
+  var inp=document.getElementById('ia-input');
+  if(!inp)return;
+  var q=inp.value.trim();
+  if(!q)return;
+  addIAMsg(q,'user');
+  inp.value='';
+  setTimeout(function(){
+    addIAMsg(responderIA(q.toLowerCase()),'ia');
+  },500);
+}
+
+function responderIA(q){
+  var d=iaBASE;
+  if(/oi|ola|bom dia|boa tarde|boa noite|tudo bem/.test(q)){
+    return 'Ola! Sou o assistente do TESTEMT. Posso te ajudar com orcamentos, clientes, producao, estoque e financeiro. O que precisa saber?';
+  }
+  if((/aguardando|aprovacao|pendente/.test(q))&&(/orc/.test(q))){
+    var ag=d.orcamentos.filter(function(o){return o.status==='Aguardando aprovacao';});
+    if(!ag.length) return 'Nenhum orcamento aguardando aprovacao no momento.';
+    return 'Ha '+ag.length+' orcamento(s) aguardando aprovacao:\n\n'+ag.map(function(o){return '* '+o.cod+' - '+o.cli+' | '+o.obra+'\n  Valor: '+fmt2(o.val)+' - Data: '+o.data;}).join('\n\n');
+  }
+  if(/orc/.test(q)&&!/aguard|aprov|atraso/.test(q)){
+    var tot=d.orcamentos.reduce(function(s,o){return s+o.val;},0);
+    return 'Temos '+d.orcamentos.length+' orcamentos recentes:\n\n'+
+      d.orcamentos.map(function(o){return '* '+o.cod+' - '+o.cli+'\n  '+fmt2(o.val)+' - '+o.status;}).join('\n\n')+
+      '\n\nTotal: '+fmt2(tot);
+  }
+  if(/atraso|atrasad/.test(q)){
+    var at=d.producao.filter(function(p){return p.atraso;});
+    return 'Ha '+at.length+' pedido(s) em atraso:\n\n'+
+      at.map(function(p){return '* '+p.op+' - '+p.nome+' ('+p.cli+')\n  Etapa: '+p.etapa+' - '+p.dias+' dias';}).join('\n\n')+
+      '\n\nRecomendo priorizar estes pedidos.';
+  }
+  if(/produ/.test(q)){
+    var total=d.producao.length;
+    var at2=d.producao.filter(function(p){return p.atraso;}).length;
+    return 'Producao: '+total+' ordens ativas, '+at2+' em atraso.\n\n'+
+      d.producao.map(function(p){return '* '+p.op+' - '+p.nome+' ('+p.cli+')\n  Etapa: '+p.etapa+(p.atraso?' - ATRASO':'');}).join('\n\n');
+  }
+  if(/estoque|material|alerta|estqu/.test(q)){
+    var crit=d.estoque.filter(function(e){return e.status!=='OK';});
+    var ok=d.estoque.filter(function(e){return e.status==='OK';});
+    return 'Estoque atual:\n\nAlertas ('+crit.length+'):\n'+
+      crit.map(function(e){return '* '+e.mat+'\n  Atual: '+e.atual+' - Minimo: '+e.min+' - '+e.status;}).join('\n\n')+
+      '\n\nOK: '+ok.length+' materiais dentro do limite.';
+  }
+  if(/faturamento|faturou|receita/.test(q)){
+    return 'Faturamento:\n\n* Mes atual (Jun/25): '+fmt2(d.financeiro.faturamentoMes)+'\n* Anual (2025): '+fmt2(d.financeiro.faturamentoAnual)+'\n* Lucro mensal: '+fmt2(d.financeiro.lucroMes)+' (margem '+d.financeiro.margemMes+'%)';
+  }
+  if(/financeiro|saldo|caixa|pagar|receber/.test(q)){
+    return 'Situacao financeira - Junho 2025:\n\n* Saldo: '+fmt2(d.financeiro.saldo)+'\n* A receber: '+fmt2(d.financeiro.aReceber)+' (18 titulos)\n* A pagar: '+fmt2(d.financeiro.aPagar)+' (12 vencimentos)\n* Inadimplencia: '+fmt2(d.financeiro.inadimplencia)+'\n\nContas vencidas:\n'+
+      d.financeiro.contasVencidas.map(function(c){return '* '+c.cli+': '+fmt2(c.val)+' - venceu em '+c.venc;}).join('\n');
+  }
+  if(/inadimpl|vencido/.test(q)){
+    return 'Inadimplencia atual: '+fmt2(d.financeiro.inadimplencia)+'\n\nClientes com contas vencidas:\n'+
+      d.financeiro.contasVencidas.map(function(c){return '* '+c.cli+': '+fmt2(c.val)+' - venceu em '+c.venc;}).join('\n')+
+      '\n\nRecomendo contato imediato via WhatsApp.';
+  }
+  if(/rentavel|melhor.*cliente|cliente.*melhor/.test(q)){
+    var sorted=d.clientes.slice().sort(function(a,b){return b.total-a.total;});
+    return 'Clientes mais rentaveis:\n\n'+sorted.map(function(c,i){return (i+1)+'. '+c.nome+'\n   '+c.cidade+' - '+fmt2(c.total)+' - '+c.pedidos+' pedidos';}).join('\n\n');
+  }
+  if(/cliente/.test(q)){
+    return 'Temos '+d.clientes.length+' clientes:\n\n'+
+      d.clientes.map(function(c){return '* '+c.nome+' - '+c.cidade+'\n  Total: '+fmt2(c.total)+' - '+c.pedidos+' pedidos';}).join('\n\n');
+  }
+  if(/kpi|indicador|resumo|geral|situacao/.test(q)){
+    return 'Indicadores - Junho 2025:\n\n* Faturamento: '+fmt2(d.financeiro.faturamentoMes)+'\n* Lucro: '+fmt2(d.financeiro.lucroMes)+' ('+d.financeiro.margemMes+'%)\n* Conversao: '+d.kpis.taxaConversao+'%\n* Orcamentos abertos: '+d.kpis.orcamentosAbertos+'\n* Aguardando aprovacao: '+d.kpis.aguardandoAprovacao+'\n* Em producao: '+d.kpis.emProducao+'\n* Em atraso: '+d.kpis.emAtraso+'\n* Entregues no mes: '+d.kpis.entreguesMes;
+  }
+  if(/produto.*vendido|mais.*vendido/.test(q)){
+    return 'Produtos mais vendidos em 2025:\n\n1. Janela de correr 2F Suprema - 18 un\n2. Porta Balcao Gold - 12 un\n3. Painel fixo Fachada - 9 un\n4. Janela de correr 4F Gold - 8 un\n5. Porta de correr - 7 un';
+  }
+  return 'Nao encontrei informacoes sobre "'+q+'".\n\nPosso ajudar com:\n* orcamentos (status, valores)\n* producao (etapas, atrasos)\n* estoque (alertas, posicao)\n* financeiro (saldo, DRE)\n* clientes (historico)\n\nOu clique em uma sugestao ao lado.';
+}
+
+// ── CSS helper para .sr .sk .sv (usados no HTML de clientes) ──
+(function addMissingCSS(){
+  var s=document.createElement('style');
+  s.textContent='.sr{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.07)}.sk{font-size:10px;color:#555D6E}.sv{font-size:11px;font-weight:500;color:#F0F2F5}.frow{display:grid;gap:8px;margin-bottom:8px}.frow.c2{grid-template-columns:1fr 1fr}.frow.c3{grid-template-columns:1fr 1fr 1fr}.frow.c4{grid-template-columns:1fr 1fr 1fr 1fr}.fl label{display:block;font-size:10px;font-weight:500;color:#555D6E;margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em}.fl input,.fl select,.fl textarea{width:100%;background:#1A1E26;border:1px solid rgba(255,255,255,.07);border-radius:7px;padding:7px 10px;color:#F0F2F5;font-family:inherit;font-size:12px;outline:none;transition:.13s}.fl input:focus,.fl select:focus,.fl textarea:focus{border-color:#3B82F6}.fl select option{background:#1A1E26}.fl textarea{resize:vertical;min-height:60px}.item-num{width:22px;height:22px;background:#3B82F6;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;margin-bottom:8px}.item-row{background:#1A1E26;border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:14px;margin-bottom:10px;position:relative}.item-row .del{position:absolute;top:10px;right:10px;background:transparent;border:none;color:#555D6E;cursor:pointer;font-size:18px;line-height:1;padding:2px}.item-row .del:hover{color:#EF4444}.orc-layout{display:grid;grid-template-columns:1fr 380px;gap:14px;align-items:start}';
+  document.head.appendChild(s);
+})();
+
+
+
+// ── CATÁLOGO DE PRODUTOS ──
+function openCatalogo(){
+  renderCatalogoModal();
+}
+
+function renderCatalogoModal(){
+  var titulo='Gerenciar catalogo de produtos';
+  var modelosRows=catalogo.modelos.map(function(m,i){
+    return '<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.07)" id="cat-row-'+i+'">'+
+      '<input type="text" value="'+m.nome+'" id="cat-mod-'+i+'" style="flex:1;background:#1A1E26;border:1px solid rgba(255,255,255,.07);border-radius:6px;padding:5px 8px;color:#F0F2F5;font-size:12px;outline:none" oninput="catUpdMod('+i+',this.value)">'+
+      '<input type="number" value="'+m.folhas+'" id="cat-fol-'+i+'" min="1" max="6" style="width:52px;background:#1A1E26;border:1px solid rgba(255,255,255,.07);border-radius:6px;padding:5px 8px;color:#F0F2F5;font-size:12px;outline:none;text-align:center" oninput="catUpdFol('+i+',this.value)" title="Folhas">'+
+      '<button onclick="catDelMod('+i+')" style="background:transparent;border:none;color:#555D6E;cursor:pointer;font-size:16px;padding:2px 6px" onmouseover="this.style.color=\'#EF4444\'" onmouseout="this.style.color=\'#555D6E\'">×</button>'+
+    '</div>';
+  }).join('');
+
+  var linhasRows=catalogo.linhas.map(function(l,i){
+    return '<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.07)">'+
+      '<input type="text" value="'+l+'" id="cat-lin-'+i+'" style="flex:1;background:#1A1E26;border:1px solid rgba(255,255,255,.07);border-radius:6px;padding:5px 8px;color:#F0F2F5;font-size:12px;outline:none" oninput="catUpdLin('+i+',this.value)">'+
+      '<button onclick="catDelLin('+i+')" style="background:transparent;border:none;color:#555D6E;cursor:pointer;font-size:16px;padding:2px 6px" onmouseover="this.style.color=\'#EF4444\'" onmouseout="this.style.color=\'#555D6E\'">×</button>'+
+    '</div>';
+  }).join('');
+
+  var corpo=
+    '<div style="display:flex;flex-direction:column;gap:14px">'+
+    '<div>'+
+      '<div style="font-size:11px;font-weight:600;color:#8B91A0;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">'+
+        'Modelos de esquadria &nbsp;<span style="font-size:9px;font-weight:400;color:#555D6E">(nome | nº folhas)</span>'+
+      '</div>'+
+      '<div id="cat-mods-list">'+modelosRows+'</div>'+
+      '<button onclick="catAddMod()" class="btn s" style="margin-top:8px;width:100%;justify-content:center;border-style:dashed">+ Novo modelo</button>'+
+    '</div>'+
+    '<div>'+
+      '<div style="font-size:11px;font-weight:600;color:#8B91A0;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Linhas de produto</div>'+
+      '<div id="cat-lins-list">'+linhasRows+'</div>'+
+      '<button onclick="catAddLin()" class="btn s" style="margin-top:8px;width:100%;justify-content:center;border-style:dashed">+ Nova linha</button>'+
+    '</div>'+
+    '<div style="display:flex;justify-content:flex-end;gap:8px;padding-top:4px;border-top:1px solid rgba(255,255,255,.07)">'+
+      '<button class="btn s" onclick="closeMdl()">Fechar</button>'+
+      '<button class="btn p s" onclick="catSalvar()">✓ Salvar catálogo</button>'+
+    '</div>'+
+  '</div>';
+
+  var tEl=document.getElementById('mdl-t');
+  var bEl=document.getElementById('mdl-b');
+  var ovl=document.getElementById('ovl');
+  if(tEl) tEl.textContent=titulo;
+  if(bEl) bEl.innerHTML=corpo;
+  if(ovl) ovl.classList.add('on');
+}
+
+function catUpdMod(i,v){if(catalogo.modelos[i])catalogo.modelos[i].nome=v;}
+function catUpdFol(i,v){if(catalogo.modelos[i])catalogo.modelos[i].folhas=parseInt(v)||1;}
+function catUpdLin(i,v){catalogo.linhas[i]=v;}
+function catDelMod(i){
+  catalogo.modelos.splice(i,1);
+  modelos=catalogo.modelos.map(function(m){return m.nome;});
+  renderCatalogoModal();
+}
+function catDelLin(i){
+  catalogo.linhas.splice(i,1);
+  linhas=catalogo.linhas.slice();
+  renderCatalogoModal();
+}
+function catAddMod(){
+  catalogo.modelos.push({id:'novo'+Date.now(),nome:'Novo modelo',folhas:2});
+  modelos=catalogo.modelos.map(function(m){return m.nome;});
+  renderCatalogoModal();
+  // foca no novo campo
+  setTimeout(function(){
+    var inputs=document.querySelectorAll('#cat-mods-list input[type=text]');
+    if(inputs.length) inputs[inputs.length-1].focus();
+  },50);
+}
+function catAddLin(){
+  catalogo.linhas.push('Nova linha');
+  linhas=catalogo.linhas.slice();
+  renderCatalogoModal();
+  setTimeout(function(){
+    var inputs=document.querySelectorAll('#cat-lins-list input[type=text]');
+    if(inputs.length) inputs[inputs.length-1].focus();
+  },50);
+}
+function catSalvar(){
+  // lê todos os valores dos inputs antes de salvar
+  var modInputs=document.querySelectorAll('#cat-mods-list input[type=text]');
+  var folInputs=document.querySelectorAll('#cat-mods-list input[type=number]');
+  modInputs.forEach(function(inp,i){if(catalogo.modelos[i])catalogo.modelos[i].nome=inp.value;});
+  folInputs.forEach(function(inp,i){if(catalogo.modelos[i])catalogo.modelos[i].folhas=parseInt(inp.value)||1;});
+  var linInputs=document.querySelectorAll('#cat-lins-list input[type=text]');
+  linInputs.forEach(function(inp,i){catalogo.linhas[i]=inp.value;});
+  // atualiza aliases globais
+  modelos=catalogo.modelos.map(function(m){return m.nome;});
+  linhas=catalogo.linhas.slice();
+  // atualiza fol[]
+  catalogo.modelos.forEach(function(m){fol[m.nome]=m.folhas;});
+  // atualiza selects dos itens já adicionados
+  qsa('.item-row').forEach(function(r){
+    var id=parseInt(r.id.split('-')[1]);
+    var sel=document.getElementById('mod-'+id);
+    if(sel){
+      var cur=sel.value;
+      sel.innerHTML=modelos.map(function(m){return '<option'+(m===cur?' selected':'')+'>'+m+'</option>';}).join('');
+    }
+    var linSel=document.getElementById('lin-'+id);
+    if(linSel){
+      var curL=linSel.value;
+      linSel.innerHTML=linhas.map(function(l){return '<option'+(l===curL?' selected':'')+'>'+l+'</option>';}).join('');
+    }
+  });
+  closeMdl();
+  showToast('Catalogo salvo! '+modelos.length+' modelos e '+linhas.length+' linhas.','green');
+}
+
+// ── WHATSAPP helpers ──
+function abrirWhatsAppCliente(){
+  var nome=document.getElementById('cli-detail-name');
+  var nomeStr=nome?nome.textContent:'cliente';
+  var msg=encodeURIComponent('Ola! Gostaria de falar sobre seus pedidos. Estou a disposicao!');
+  window.open('https://wa.me/?text='+msg,'_blank');
+  showToast('WhatsApp aberto para '+nomeStr,'green');
+}
+function enviarWhatsAppOrc(cod,cli){
+  var msg=encodeURIComponent('Ola '+cli+'! Segue o link da proposta '+cod+' da TESTEMT. Qualquer duvida estou a disposicao!');
+  window.open('https://wa.me/?text='+msg,'_blank');
+  showToast('WhatsApp aberto para '+cli,'green');
+}
+
+// ── updPv alias (chamado pelo formulário de cliente/obra) ──
+function updPv(){
+  if(activeItem) updItem(activeItem);
+}
+
+// ── INIT ──
+initCharts();
+</script>
+</body>
+</html>
