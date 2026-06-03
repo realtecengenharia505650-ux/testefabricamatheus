@@ -5,6 +5,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
 <meta name="theme-color" content="#0D0F12">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>TESTEMT — Esquadrias</title>
@@ -1943,14 +1944,14 @@ function renderCatalogoModal(){
     return '<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.07)" id="cat-row-'+i+'">'+
       '<input type="text" value="'+m.nome+'" id="cat-mod-'+i+'" style="flex:1;background:#1A1E26;border:1px solid rgba(255,255,255,.07);border-radius:6px;padding:5px 8px;color:#F0F2F5;font-size:12px;outline:none" oninput="catUpdMod('+i+',this.value)">'+
       '<input type="number" value="'+m.folhas+'" id="cat-fol-'+i+'" min="1" max="6" style="width:52px;background:#1A1E26;border:1px solid rgba(255,255,255,.07);border-radius:6px;padding:5px 8px;color:#F0F2F5;font-size:12px;outline:none;text-align:center" oninput="catUpdFol('+i+',this.value)" title="Folhas">'+
-      '<button onclick="catDelMod('+i+')" style="background:transparent;border:none;color:#555D6E;cursor:pointer;font-size:16px;padding:2px 6px" onmouseover="this.style.color='#EF4444'" onmouseout="this.style.color='#555D6E'">×</button>'+
+      '<button onclick="catDelMod('+i+')" style="background:transparent;border:none;color:#555D6E;cursor:pointer;font-size:16px;padding:2px 6px" onmouseover="this.style.color=\'#EF4444\'" onmouseout="this.style.color=\'#555D6E\'">×</button>'+
     '</div>';
   }).join('');
 
   var linhasRows=catalogo.linhas.map(function(l,i){
     return '<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.07)">'+
       '<input type="text" value="'+l+'" id="cat-lin-'+i+'" style="flex:1;background:#1A1E26;border:1px solid rgba(255,255,255,.07);border-radius:6px;padding:5px 8px;color:#F0F2F5;font-size:12px;outline:none" oninput="catUpdLin('+i+',this.value)">'+
-      '<button onclick="catDelLin('+i+')" style="background:transparent;border:none;color:#555D6E;cursor:pointer;font-size:16px;padding:2px 6px" onmouseover="this.style.color='#EF4444'" onmouseout="this.style.color='#555D6E'">×</button>'+
+      '<button onclick="catDelLin('+i+')" style="background:transparent;border:none;color:#555D6E;cursor:pointer;font-size:16px;padding:2px 6px" onmouseover="this.style.color=\'#EF4444\'" onmouseout="this.style.color=\'#555D6E\'">×</button>'+
     '</div>';
   }).join('');
 
